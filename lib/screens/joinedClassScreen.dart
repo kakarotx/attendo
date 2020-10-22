@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendo/widgets/card_widget.dart';
 
 //this screen displays all the classes joined by you
 
@@ -13,13 +12,7 @@ class JoinedClassScreen extends StatelessWidget {
     ),
       body: ListView(
         children: [
-          CardWidget(imagePath: 'assets/images/artWork/bookwormOrange.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookworm.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookwormOrange.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookwormOrange.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookworm.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookwormOrange.jpg',),
-          CardWidget(imagePath: 'assets/images/artWork/bookworm.jpg',),
+
 
         ],
       ),

@@ -1,18 +1,43 @@
+import 'package:attendo/general_classes/course_class.dart';
+import 'package:attendo/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import 'package:attendo/general_classes/list_of_card.dart';
 
-//to create your own new classes
+
+//style
 const bottomDrawerStyle = TextStyle(
   color: Colors.black,fontSize: 20, fontWeight: FontWeight.bold
 );
 
-class CreateNewClassScreen extends StatelessWidget {
-  final _random = new Random();
-  int randomClassCode(int min, int max) => min + _random.nextInt(max - min);
+
+//this is popScreen to create New class
+// ignore: must_be_immutable
+class CreateNewClassScreen extends StatefulWidget {
+
+
+  @override
+  _CreateNewClassScreenState createState() => _CreateNewClassScreenState();
+}
+
+class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
+
+  String courseName;
+
+  String yearOfBatch;
+
+  int courseCode;
 
   @override
   Widget build(BuildContext context) {
+
+    courseCode = 9999 + Random().nextInt(99999-9999);
+    // newCourse.courseCode = courseCode;
+    // newCourse=Course(courseName: courseName,courseCode: courseCode,yearOfBatch: yearOfBatch);
+
+
     return Container(
       color: Color(0xFF737373),
       child: Container(
@@ -35,6 +60,11 @@ class CreateNewClassScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: TextField(
+                    onChanged: (newValue){
+                    setState(() {
+                      courseName = newValue;
+                    });
+                    },
                     style: bottomDrawerStyle,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
@@ -50,11 +80,16 @@ class CreateNewClassScreen extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  'Batch :',
+                  'Batch : ',
                   style: bottomDrawerStyle,
                 ),
                 Expanded(
                   child: TextField(
+                    onChanged: (newValue){
+                      setState(() {
+                        yearOfBatch=(newValue);
+                      });
+                    },
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
                       hintText: 'Enter Year',
@@ -65,16 +100,26 @@ class CreateNewClassScreen extends StatelessWidget {
             ),
             SizedBox(height: 20,),
             Text(
-              'Class Code : ${randomClassCode(9999, 99999)}',
+              'Class Code : $courseCode',
               style: bottomDrawerStyle,
             ),
             SizedBox(height: 20,),
 
             Center(
               child: RaisedButton(
-                onPressed: (){
-                  print('hello');
-                },
+                onPressed:(){
+
+                  Provider.of<ListofCard>(context,
+                  listen: false).addItemToCourseList(CardWidget(course: Course(
+                    yearOfBatch: yearOfBatch, courseCode: courseCode,courseName: courseName
+                  )));
+                  //create a new card with Course details and
+                  //add it to the List
+
+
+                  Navigator.pop(context);
+                }
+                ,
                 child: Text('Create Class', style: TextStyle(color: Colors.white),),
                 color: Colors.black,
               ),

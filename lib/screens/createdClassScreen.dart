@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:attendo/Screens/createNewClass_popup.dart';
 import 'package:attendo/screens/create_list_of_created_class.dart';
 
-//this Screen displays all the created classes by you
+
+///this Screen displays all the created classes by you
 
 // ignore: must_be_immutable
 class CreatedClassScreen extends StatefulWidget {

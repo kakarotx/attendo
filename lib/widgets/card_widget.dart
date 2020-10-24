@@ -1,15 +1,21 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:attendo/general_classes/course_class.dart';
+import 'package:attendo/modals/course_class.dart';
 
 const attendoTextStyle = TextStyle(color: Colors.white, fontSize: 18);
 
 class CardWidget extends StatelessWidget {
-  CardWidget({this.course});
+  CardWidget({this.course,this.imagePath });
 
+  final imagePath;
   final Course course;
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return GestureDetector(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -20,7 +26,7 @@ class CardWidget extends StatelessWidget {
               image: DecorationImage(
                   fit: BoxFit.cover,
                   image: AssetImage(
-                    course.imagePath,
+                    imagePath,
                   )),
               color: Colors.red,
               borderRadius: BorderRadius.circular(5)),
@@ -35,14 +41,21 @@ class CardWidget extends StatelessWidget {
                 height: 4,
               ),
               Text(
-                'Batch  ${course.yearOfBatch.toString()}',
+                'Batch  ${course.yearOfBatch}',
                 style: attendoTextStyle.copyWith(fontSize: 12),
+              ),
+              Text(
+                'Code:${course.courseCode.toString()}',
+                style: attendoTextStyle,
+              ),
+              SizedBox(
+                height: 4,
               ),
               SizedBox(
                 height: 50,
               ),
               Text(
-                'TeacherName:TODO//inCardWidget',
+                'Teacher: UserName',
                 style: attendoTextStyle.copyWith(fontSize: 15),
               ),
             ],

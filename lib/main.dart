@@ -1,8 +1,14 @@
+import 'package:attendo/home_page.dart';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
 import 'package:provider/provider.dart';
 import 'modals/list_of_course_details.dart';
-void main() {
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

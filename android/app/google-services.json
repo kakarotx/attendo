@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "9039975745",
+    "firebase_url": "https://attendo-237fc.firebaseio.com",
+    "project_id": "attendo-237fc",
+    "storage_bucket": "attendo-237fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9039975745:android:445509743d56dc249ffdc0",
+        "android_client_info": {
+          "package_name": "com.twoSlash.attendo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "9039975745-00j04kajfrhm7h962sg270ucl63cv834.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.twoSlash.attendo",
+            "certificate_hash": "d13a8e4dfe945318250ec92c82057aa1be97a257"
+          }
+        },
+        {
+          "client_id": "9039975745-rptqt31i5cegtrrsge2j6u67304dvcuu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGfK-vgo9EuV7tZnuAQ3UM1myHvsQoHks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9039975745-rptqt31i5cegtrrsge2j6u67304dvcuu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

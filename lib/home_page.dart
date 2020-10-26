@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Screens/createdClassScreen.dart';
 import 'Screens/joinedClassScreen.dart';
-import 'package:provider/provider.dart';
-import 'modals/list_of_course_details.dart';
+import 'package:attendo/widgets/custom_navigation_drawer.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-const attendoTextStyle = TextStyle(color: Colors.black);
+final GoogleSignIn googleSignIn = GoogleSignIn();
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,13 +16,56 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   TabController tabController;
+  ///this isAuth controls the which screen to show
+  bool isAuth = false;
+  GoogleSignInAccount userAccount;
+
+  login(){
+    googleSignIn.signIn();
+  }
+
+  logOut(){
+    googleSignIn.signOut();
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+
+    ///getting and storing the UserAccount info
+    googleSignIn.onCurrentUserChanged.listen((account) {
+      handleSignIn(account);
+    },
+    onError: (err){
+      print('error signing in- $err');
+    });
+
+    ///when we open our app second time, then it auto sign in
+    googleSignIn.signInSilently(suppressErrors: false).then((account){
+      handleSignIn(account);
+    }
+    ).catchError((err){
+      print('error on silently sign in $err');
+    });
   }
+
+  handleSignIn(GoogleSignInAccount account){
+    if(account!=null){
+      userAccount = account;
+      print('User $account');
+      setState(() {
+        isAuth = true;
+      });
+    } else{
+      setState(() {
+        isAuth = false;
+      });
+
+    }
+  }
+
 
   @override
   void dispose() {
@@ -30,17 +74,32 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  ///welcome Page will be shown after user sign in with google
+  MaterialApp welcomePage(){
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
+
           drawer: CustomDrawer(),
           appBar: AppBar(
-            title: Text(
-              'Attendo',
-              style: attendoTextStyle,
+            iconTheme: IconThemeData(color: Colors.black),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Hello ${userAccount.displayName}',
+                  style: attendoTextStyle,
+                ),
+                GestureDetector(
+                  onTap: (){
+                    logOut();
+                  },
+                  child: Icon(
+                    Icons.exit_to_app,color: Colors.black,
+                  ),
+                )
+              ],
             ),
             backgroundColor: Colors.white,
             bottom: TabBar(
@@ -70,62 +129,38 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-}
 
-
-
-//custom drawer class
-class CustomDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-
-                      color: Colors.grey,
-                    )),
-              ),
-              padding: const EdgeInsets.all(15.0),
-              child: Text(
-                '//Attendo',
-                style: attendoTextStyle.copyWith(
-                    fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Text('Created By You:', style: attendoTextStyle.copyWith(fontWeight: FontWeight.w500),),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Column(
-                          children:[
-                            //TODO: add RealCourses to this list
-                            Text('Course 1'),
-                            Text('Course 2'),
-                            Text('Course 3')
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+  ///sign in screen
+  MaterialApp signInScreen(){
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          child: Center(
+            child: GestureDetector(
+                onTap: () {
+                login();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Image(
+                    image: AssetImage('assets/images/others/signInGoogle.png'),
+                  ),
                 ),
               ),
-            ),
-          ],
-        )
+          ),
+        ),
+      ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    ///this is where we are deciding which Screen to show: by isAuth bool
+    return isAuth ? welcomePage() : signInScreen();
+  }
 }
+
+
+
+
 

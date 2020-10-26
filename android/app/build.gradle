@@ -38,11 +38,12 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.attendo"
+        applicationId "com.twoSlash.attendo"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -60,4 +61,9 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.android.support:multidex:1.0.3'
 }
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'

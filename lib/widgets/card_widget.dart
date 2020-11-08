@@ -3,13 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:attendo/modals/course_class.dart';
 
-const attendoTextStyle = TextStyle(color: Colors.white, fontSize: 18);
+const attendoTextStyle = TextStyle(color: Colors.white, fontSize: 14);
+const double cardBorderRadius = 17;
+
 
 class CardWidget extends StatelessWidget {
-  CardWidget({this.course,this.imagePath });
+  CardWidget({this.newCourse,this.imagePath });
 
   final imagePath;
-  final Course course;
+  final Course newCourse;
 
   @override
   Widget build(BuildContext context) {
@@ -29,30 +31,30 @@ class CardWidget extends StatelessWidget {
                     imagePath,
                   )),
               color: Colors.red,
-              borderRadius: BorderRadius.circular(5)),
+              borderRadius: BorderRadius.circular(cardBorderRadius)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                course.courseName,
+                newCourse.courseName,
                 style: attendoTextStyle,
               ),
               SizedBox(
                 height: 4,
               ),
               Text(
-                'Batch  ${course.yearOfBatch}',
+                'Batch  ${newCourse.yearOfBatch}',
                 style: attendoTextStyle.copyWith(fontSize: 12),
               ),
               Text(
-                'Code:${course.courseCode.toString()}',
-                style: attendoTextStyle,
+                'Code:${newCourse.courseCode.toString()}',
+                style: attendoTextStyle.copyWith(fontSize: 12),
               ),
               SizedBox(
                 height: 4,
               ),
               SizedBox(
-                height: 50,
+                height: 30,
               ),
               Text(
                 'Teacher: UserName',

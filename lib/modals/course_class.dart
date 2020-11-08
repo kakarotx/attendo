@@ -18,4 +18,14 @@ class Course extends ChangeNotifier{
   // String courseTeacher;
   // int semesterCount;
 
+  setCourseCodeTo(int code){
+    courseCode=code;
+  }
+  setCourseNameTo(String name){
+    courseName=name;
+  }
+  setYearOfBatchTo(String year){
+    yearOfBatch = year;
+  }
+
 }

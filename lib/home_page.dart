@@ -1,11 +1,11 @@
-
 import 'package:attendo/screens/courses_display/createdClassScreen.dart';
 import 'package:attendo/screens/courses_display/joinedClassScreen.dart';
+import 'package:attendo/screens/other_screens/notifications_page.dart';
 import 'package:attendo/screens/other_screens/user_profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 const kHeaderStyle = TextStyle(
     fontFamily: 'inter',
@@ -13,10 +13,14 @@ const kHeaderStyle = TextStyle(
     fontWeight: FontWeight.w800,
     color: Colors.black);
 
-final GoogleSignIn googleSignIn = GoogleSignIn();
-final userRef = FirebaseFirestore.instance.collection('users');
+// final GoogleSignIn googleSignIn = GoogleSignIn();
+// final userRef = FirebaseFirestore.instance.collection('users');
 
 class HomePage extends StatefulWidget {
+
+  HomePage({@required this.updateUser});
+  VoidCallback updateUser;
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -42,13 +46,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   bool isAuth = false;
   GoogleSignInAccount userAccount;
 
-  login() {
-    googleSignIn.signIn();
-  }
-
-  logOut() {
-    googleSignIn.signOut();
-  }
+  // login() {
+  //   googleSignIn.signIn();
+  // }
+  //
+  // logOut() {
+  //   googleSignIn.signOut();
+  // }
 
   @override
   void initState() {
@@ -58,50 +62,50 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     pageController = PageController();
 
     ///getting and storing the UserAccount info
-    googleSignIn.onCurrentUserChanged.listen((account) {
-      handleSignIn(account);
-    }, onError: (err) {
-      print('error signing in- $err');
-    });
-
-    ///when we open our app second time, then it auto sign in
-    googleSignIn.signInSilently(suppressErrors: false).then((account) {
-      // CircularProgressIndicator();
-      handleSignIn(account);
-    }).catchError((err) {
-      print('error on silently sign in $err');
-    });
-  }
-
-  handleSignIn(GoogleSignInAccount account) {
-    if (account != null) {
-      checkUserInFireStore();
-      userAccount = account;
-      print('User $account');
-      setState(() {
-        isAuth = true;
-      });
-    } else {
-      setState(() {
-        isAuth = false;
-      });
-    }
-  }
-
-  checkUserInFireStore() async{
-    //check if user already exist in database according to their ID
-    final GoogleSignInAccount user = googleSignIn.currentUser;
-    final DocumentSnapshot doc = await userRef.doc(user.id).get();
+    // googleSignIn.onCurrentUserChanged.listen((account) {
+    //   handleSignIn(account);
+    // }, onError: (err) {
+    //   print('error signing in- $err');
+    // });
     //
-    userRef.doc(user.id).set({
-      "id": user.id,
-      "userName": user.displayName,
-      "photoUrl": user.photoUrl,
-      "userEmail": user.email
-
-    });
-
+    // ///when we open our app second time, then it auto sign in
+    // googleSignIn.signInSilently(suppressErrors: false).then((account) {
+    //   // CircularProgressIndicator();
+    //   handleSignIn(account);
+    // }).catchError((err) {
+    //   print('error on silently sign in $err');
+    // });
   }
+
+  // handleSignIn(GoogleSignInAccount account) {
+  //   if (account != null) {
+  //     checkUserInFireStore();
+  //     userAccount = account;
+  //     print('User $account');
+  //     setState(() {
+  //       isAuth = true;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isAuth = false;
+  //     });
+  //   }
+  // }
+
+  // checkUserInFireStore() async{
+  //   //check if user already exist in database according to their ID
+  //   final GoogleSignInAccount user = googleSignIn.currentUser;
+  //   final DocumentSnapshot doc = await userRef.doc(user.id).get();
+  //   //
+  //   userRef.doc(user.id).set({
+  //     "id": user.id,
+  //     "userName": user.displayName,
+  //     "photoUrl": user.photoUrl,
+  //     "userEmail": user.email
+  //
+  //   });
+  //
+  // }
 
   @override
   void dispose() {
@@ -113,28 +117,28 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
 
   ///sign in screen
-  MaterialApp signInScreen() {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
-          child: Center(
-            child: GestureDetector(
-              onTap: () {
-                login();
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 100),
-                child: Image(
-                  image: AssetImage('assets/images/others/signInGoogle.png'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // MaterialApp signInScreen() {
+  //   return MaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     home: Scaffold(
+  //       body: Container(
+  //         child: Center(
+  //           child: GestureDetector(
+  //             onTap: () {
+  //               print('TODO');
+  //             },
+  //             child: Padding(
+  //               padding: const EdgeInsets.symmetric(horizontal: 100),
+  //               child: Image(
+  //                 image: AssetImage('assets/images/others/signInGoogle.png'),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   ///welcome Page will be shown after user sign in with google
   ///basically Welcome Home page
@@ -158,14 +162,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Hey,', style: kHeaderStyle),
-                        Text('${userAccount.displayName}.',
+                        Text('USER',
                             style: kHeaderStyle),
                       ],
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10, right: 20, bottom: 10),
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(userAccount.photoUrl),
+                        //TODO: attachPhotoURL
+                        //backgroundImage: NetworkImage(userAccount.photoUrl),
                         radius: 30,
                       ),
                     )
@@ -180,7 +185,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             onPageChanged: onPageChanged,
             children: <Widget>[
               CreatedClassScreen(),
-              UserProfile(imageUrl: userAccount.photoUrl,),
+              //TODO: attachPhotoURLwithACCOUNT
+              UserProfile(onSignOut: ()=>widget.updateUser(),),
+              NotificationPage(),
               JoinedClassScreen(),
             ],
           ),
@@ -192,6 +199,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ///this is where we are setting aur bottom ICONS
               BottomNavigationBarItem(icon: Icon(Icons.add)),
               BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined)),
+              BottomNavigationBarItem(icon: Icon(Icons.alternate_email_rounded)),
               BottomNavigationBarItem(icon: Icon(Icons.settings)),
             ],
           ),
@@ -203,7 +211,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     ///this is where we are deciding which Screen to show: by isAuth bool
-    return isAuth ? welcomePage() : signInScreen();
+    return welcomePage();
   }
 }
 

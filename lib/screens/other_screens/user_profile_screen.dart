@@ -1,20 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProfile extends StatelessWidget {
-  UserProfile({this.imageUrl});
-  final String imageUrl;
+  // UserProfile({this.imageUrl});
+  // final String imageUrl;
+  UserProfile({@required this.onSignOut});
+
+  Function onSignOut;
+
+  void _signOut()async{
+    await FirebaseAuth.instance.signOut();
+    onSignOut();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        EditProfileCard(imageUrl: imageUrl),
+        Center(child: Text('Profile Page'),),
+        // EditProfileCard(imageUrl: imageUrl),
         //this container will contain other stuff
         GestureDetector(
-          onTap: () {
-            print('logging out');
-          },
+          onTap: _signOut,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
             child: Text(
@@ -31,6 +39,7 @@ class UserProfile extends StatelessWidget {
     );
   }
 }
+
 
 ///edit Profile Card
 class EditProfileCard extends StatelessWidget {

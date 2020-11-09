@@ -14,6 +14,8 @@ TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
 ///to join already created classes by others
 class JoinNewClassScreen extends StatefulWidget {
 
+  JoinNewClassScreen({this.toggleScreenCallBack});
+  final Function toggleScreenCallBack;
 
   @override
   _JoinNewClassScreenState createState() => _JoinNewClassScreenState();
@@ -140,7 +142,7 @@ class _JoinNewClassScreenState extends State<JoinNewClassScreen> {
                       )
                   );
                   num = Provider.of<ListOfCourseDetails>(context, listen: false).finalListOfJoinedCourses.length;
-                  print(num);
+                  widget.toggleScreenCallBack();
                   Navigator.pop(context);
 
                 },

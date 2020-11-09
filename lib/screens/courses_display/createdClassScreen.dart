@@ -1,4 +1,5 @@
 import 'package:attendo/modals/list_of_course_details.dart';
+import 'package:attendo/screens/courses_display/zero_class_screen.dart';
 import 'package:attendo/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'createNewClass_popup.dart';
@@ -52,22 +53,8 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
             child: Icon(Icons.add),
             backgroundColor: Colors.black,
           ),
-          body: zeroCC ? ZeroCCScreen():BuildListOfMyClasses()),
+          body: zeroCC ? ZeroClassScreen(title: 'NO CLASS CREATED',):BuildListOfMyClasses()),
     );
   }
 }
 
-///this is the zeroCCScreen or [NO CLASS CREATED SCREEN]
-class ZeroCCScreen extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-
-    return Center(
-      child: Text('NO CLASS CREATED',
-        style: TextStyle(fontSize: 25,
-            fontWeight: FontWeight.bold,
-        color: Colors.black54),
-      ),
-    );
-  }
-}

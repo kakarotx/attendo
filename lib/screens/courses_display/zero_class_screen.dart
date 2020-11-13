@@ -12,9 +12,6 @@ class ZeroClassScreen extends StatelessWidget{
 
     return Center(
       child: Text(title,
-        style: TextStyle(fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: Colors.black54),
       ),
     );
   }

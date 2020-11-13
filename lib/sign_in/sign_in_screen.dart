@@ -1,73 +1,97 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 ///this Page is not used anywhere as of now,
 ///Working on new sign in functionality in this page
 class SignInPage extends StatelessWidget {
-  SignInPage({@required this.onSignIn});
+  final _firebaseAuth = FirebaseAuth.instance;
 
-  final Function(User) onSignIn;
 
-  _signInAnonymously() async {
-    try {
-      final UserCredential authResult =
-          await FirebaseAuth.instance.signInAnonymously();
-      onSignIn(authResult.user);
-    } catch (e) {
-      print('Sign in Error: $e');
+  ///this is the same user who logged in, but also contains
+  ///some more properties
+  User user;
+
+  ///Implementation of SignInWithGoogle
+  _signInWithGoogle() async {
+    try{
+      GoogleSignIn googleSignIn = GoogleSignIn();
+      GoogleSignInAccount googleAccount = await googleSignIn.signIn();
+
+      if (googleAccount != null) {
+        GoogleSignInAuthentication googleAuth =
+        await googleAccount.authentication;
+        if (googleAuth.accessToken != null && googleAuth.idToken != null) {
+          final authResult = await _firebaseAuth.signInWithCredential(
+            GoogleAuthProvider.credential(
+                accessToken: googleAuth.accessToken, idToken: googleAuth.idToken),
+          );
+          print(authResult.user.email);
+          user=authResult.user;
+          _uploadUserData(user);
+          return user;
+        } else{
+          PlatformException(
+              code: 'ERROR_MISSING_GOOGLE_AUTH_TOKEN', message: 'Missing Google Auth Token');
+        }
+      } else {
+        PlatformException(
+            code: 'ERROR_ABORTED_BY_USER', message: 'Sign in aborted by User');
+      }
+    } catch(e){
+      print('QWERTY:: $e');
     }
+
   }
 
+  _uploadUserData(User user) {
+
+    print('qwerty:: called');
+    final _firestore = FirebaseFirestore.instance;
+    final userCollection = _firestore.collection('users');
+    userCollection.doc(user.uid.toString()).set(
+        {
+          'userEmail': user.email,
+          'dateTime' : DateTime.now(),
+        });
+
+    print('qwerty:: ${user.email}');
+  }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 2,
-            title: Center(
-                child: Text(
-              'Attendo',
-              style: TextStyle(color: Colors.black),
-            )),
-          ),
-          body: Container(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Sign In'),
-                FlatButton(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  splashColor: Colors.blue.shade600,
-                  color: Colors.blueAccent,
-                  onPressed: () {
-                    print('pressed');
-                  },
-                  child: Center(
-                    child: Text('Sign-in with Google'),
-                  ),
+    return signInScreen();
+  }
+
+  ///method that builds signInScreen
+  CupertinoApp signInScreen() {
+    return CupertinoApp(
+      debugShowCheckedModeBanner: false,
+    home: CupertinoPageScaffold(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Sign In'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+              child: CupertinoButton.filled(
+                onPressed: (){
+                  _signInWithGoogle();
+                },
+                child: Center(
+                  child: Text('Sign in with Google'),
                 ),
-                FlatButton(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  splashColor: Colors.black26,
-                  color: Colors.black54,
-                  onPressed: () {
-                    print('pressed');
-                    _signInAnonymously();
-                  },
-                  child: Center(
-                    child: Text('Sign-in Anonymously'),
-                  ),
-                )
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

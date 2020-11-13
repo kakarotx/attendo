@@ -1,4 +1,4 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/modals/list_of_course_details.dart';
 import 'package:attendo/widgets/card_widget.dart';
@@ -8,12 +8,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 //style
 const bottomDrawerStyle =
-TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
-
+    TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
 
 ///to join already created classes by others
 class JoinNewClassScreen extends StatefulWidget {
-
   JoinNewClassScreen({this.toggleScreenCallBack});
   final Function toggleScreenCallBack;
 
@@ -22,7 +20,6 @@ class JoinNewClassScreen extends StatefulWidget {
 }
 
 class _JoinNewClassScreenState extends State<JoinNewClassScreen> {
-
   String enteredClassCode;
   String imagePath = 'assets/images/artWork/art01.jpg';
   CollectionReference courseRef;
@@ -30,9 +27,9 @@ class _JoinNewClassScreenState extends State<JoinNewClassScreen> {
   String yearOfBatch;
   int courseCode;
 
-  getCourseData({String enteredClassCode}) async{
-
-    final DocumentSnapshot courseData = await courseRef.doc(enteredClassCode).get();
+  getCourseData({String enteredClassCode}) async {
+    final DocumentSnapshot courseData =
+        await courseRef.doc(enteredClassCode).get();
 
     print('this is qwerty $courseData');
     // print(courseData.data()["courseCode"]);
@@ -41,16 +38,14 @@ class _JoinNewClassScreenState extends State<JoinNewClassScreen> {
 
     ///making our new course
 
-    try{
-      courseName=courseData.data()['courseName'];
-      courseCode=courseData.data()['courseCode'];
-      yearOfBatch=courseData.data()['yearOfBatch'];
+    try {
+      courseName = courseData.data()['courseName'];
+      courseCode = courseData.data()['courseCode'];
+      yearOfBatch = courseData.data()['yearOfBatch'];
       print('this is $courseName');
-    }catch(e){
+    } catch (e) {
       print('qwerty error::::$e');
     }
-
-
   }
 
   @override
@@ -60,108 +55,90 @@ class _JoinNewClassScreenState extends State<JoinNewClassScreen> {
     courseRef = FirebaseFirestore.instance.collection('coursesDetails');
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF737373),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 50, horizontal: 25),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+      padding: EdgeInsets.symmetric(vertical: 50, horizontal: 25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'Join New Class',
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
+          SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            children: [
+              Text(
+                'ClassCode :  ',
+              ),
+              Expanded(
+                child: CupertinoTextField(
+                  textAlign: TextAlign.center,
+                  onChanged: (String newValue) {
+                    enteredClassCode = newValue;
+                  },
+                  // textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Center(
+            child: CupertinoButton.filled(
+              onPressed: _onJoinButtonPressed,
               child: Text(
-                'Join New Class',
-                style: bottomDrawerStyle.copyWith(fontSize: 20),
+                'Join Class',
               ),
             ),
-            SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  'ClassCode :',
-                  style: bottomDrawerStyle.copyWith(fontSize: 20),
-                ),
-                Expanded(
-                  child: TextField(
-                    onChanged: (String newValue){
-                      enteredClassCode = newValue;
-                    },
-                    style: bottomDrawerStyle,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Class Code',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Center(
-              child: RaisedButton(
-                onPressed: () async{
-                  await getCourseData(enteredClassCode: enteredClassCode);
-                  int num = Provider.of<ListOfCourseDetails>(context, listen: false).finalListOfJoinedCourses.length;
-                  print(num);
-                  print('joining new course');
-                  print(courseName);
-                  print(courseCode);
-                  print(yearOfBatch);
-                  // getCourseData(enteredClassCode: enteredClassCode);
-                  ///
-                  //check if the entered code is in the List of Code generated by
-                  //teachers previously, and if it matches, build the same courseCard
-
-
-                  ///
-
-                  ///the provider part that was here is commented below, OUTSIDE THE CLASS
-
-                  ///now we are using Data on Cloud
-                  // if(Provider.of<ListOfCourseDetails>(context, listen: false).listOfAllCourseCodes.contains(enteredClassCode)) {
-                  //
-                  // }
-                  Provider.of<ListOfCourseDetails>(context,listen: false).addItemToJoinedCoursesList(
-                      CardWidget(
-                        imagePath: imagePath,
-                        newCourse: Course(courseName: courseName, courseCode: courseCode, yearOfBatch: yearOfBatch),
-                      )
-                  );
-                  num = Provider.of<ListOfCourseDetails>(context, listen: false).finalListOfJoinedCourses.length;
-                  widget.toggleScreenCallBack();
-                  Navigator.pop(context);
-
-                },
-                child: Text(
-                  'Join Class',
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.black,
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
+
+  _onJoinButtonPressed() async {
+    await getCourseData(enteredClassCode: enteredClassCode);
+    int num = Provider.of<ListOfCourseDetails>(context, listen: false)
+        .finalListOfJoinedCourses
+        .length;
+    print(num);
+    print('joining new course');
+    print(courseName);
+    print(courseCode);
+    print(yearOfBatch);
+    // getCourseData(enteredClassCode: enteredClassCode);
+    ///
+    //check if the entered code is in the List of Code generated by
+    //teachers previously, and if it matches, build the same courseCard
+
+    ///
+
+    ///the provider part that was here is commented below, OUTSIDE THE CLASS
+
+    ///now we are using Data on Cloud
+    // if(Provider.of<ListOfCourseDetails>(context, listen: false).listOfAllCourseCodes.contains(enteredClassCode)) {
+    //
+    // }
+    Provider.of<ListOfCourseDetails>(context, listen: false)
+        .addItemToJoinedCoursesList(CardWidget(
+      imagePath: imagePath,
+      newCourse: Course(
+          courseName: courseName,
+          courseCode: courseCode,
+          yearOfBatch: yearOfBatch),
+    ));
+    num = Provider.of<ListOfCourseDetails>(context, listen: false)
+        .finalListOfJoinedCourses
+        .length;
+    widget.toggleScreenCallBack();
+    Navigator.pop(context);
+  }
 }
-
-
-
 
 ///provider part
 // if(Provider.of<ListOfCourseDetails>(context, listen: false).listOfAllCourseCodes.contains(enteredClassCode))

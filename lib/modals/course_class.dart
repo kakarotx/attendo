@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -9,10 +8,13 @@ class Course extends ChangeNotifier{
   //constructor for COURSE class
   Course({this.courseCode, this.yearOfBatch, this.courseName});
 
+  Color accentColor;
   //required variables for any Course
   int courseCode;
   String courseName;
   String yearOfBatch;
+
+  String imageAsset = 'assets/images/artWork/art01.jpg';
 
   //we will set it to the UserName
   // String courseTeacher;

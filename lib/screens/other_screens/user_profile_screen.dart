@@ -1,40 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class UserProfile extends StatelessWidget {
-  // UserProfile({this.imageUrl});
-  // final String imageUrl;
-  UserProfile({@required this.onSignOut});
 
-  Function onSignOut;
 
   void _signOut()async{
     await FirebaseAuth.instance.signOut();
-    onSignOut();
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(child: Text('Profile Page'),),
         // EditProfileCard(imageUrl: imageUrl),
         //this container will contain other stuff
-        GestureDetector(
-          onTap: _signOut,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-            child: Text(
-              'LogOut',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            decoration: BoxDecoration(
-              color: Color(0xFF00AAFF),
-              borderRadius: BorderRadius.circular(35),
-            ),
-          ),
-        ),
+        SizedBox(height: 10,),
+        CupertinoButton.filled(
+          child: Text('Log Out'),
+          onPressed: _signOut,
+        )
       ],
     );
   }

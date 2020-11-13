@@ -1,4 +1,3 @@
-import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/widgets/card_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 ///most of the Variables which need to update on UI are initialized here
 
 class ListOfCourseDetails extends ChangeNotifier{
+
 
   List<CardWidget> finalListOfCreatedCourses=[];
 
@@ -29,7 +29,5 @@ class ListOfCourseDetails extends ChangeNotifier{
     finalListOfJoinedCourses.add(joinCourseCard);
     notifyListeners();
   }
-
-
 
 }

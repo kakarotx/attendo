@@ -1,40 +1,32 @@
-import 'package:attendo/modals/list_of_course_details.dart';
-import 'package:attendo/screens/courses_display/create_list_of_joined_class.dart';
+import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/screens/courses_display/joinNewClass_popup.dart';
-import 'package:attendo/screens/courses_display/zero_class_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:attendo/widgets/card_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 ///this screen displays all the classes joined by you
 final _fireStore = FirebaseFirestore.instance;
 
 class JoinedClassScreen extends StatefulWidget {
+  JoinedClassScreen({this.user});
+  final User user;
   @override
   _JoinedClassScreenState createState() => _JoinedClassScreenState();
 }
 
 class _JoinedClassScreenState extends State<JoinedClassScreen> {
   List<Text> coursesList = [];
+  Course joinedCourse;
 
   bool zeroJC = true;
 
   ///this function will toggle the ZeroCC screen
   void toggleZeroCCScreen(){
-    if(Provider.of<ListOfCourseDetails>(context, listen: false).
-    finalListOfJoinedCourses.length==0){
-      setState(() {
-        zeroJC = true;
-      });
-    } else{
-      setState(() {
-        zeroJC = false;
-      });
-    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,21 +46,60 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
                       CupertinoIcons.add,
                       // size: 20,
                     ),
-                    onPressed: () {
-                      showCupertinoModalBottomSheet(
+                    onPressed: () async{
+                      joinedCourse =
+                      await showCupertinoModalBottomSheet(
                         context: context,
-                        builder: (BuildContext context) => JoinNewClassScreen(toggleScreenCallBack: toggleZeroCCScreen,),
+                        builder: (BuildContext context) => JoinNewClassPopup(toggleScreenCallBack: toggleZeroCCScreen,user: widget.user,),
                       );
                     },
                   ),                                                              ////,
                 ),
               ];
             },
-           body: zeroJC ? ZeroClassScreen(title: 'NO CLASS JOINED',):BuildListOfJoinedClasses(),
+           body:buildListOfJoinedClass(),
 
       ),
       // child:
     ));
+  }
+
+  buildListOfJoinedClass() {
+    //courseRef.snapshots(),
+    return StreamBuilder<QuerySnapshot>(
+      stream:userRef.doc(widget.user.uid).collection('joinedCoursesByUser').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CupertinoActivityIndicator();
+        } else {
+          final courses = snapshot.data.docs;
+          List<CardWidget> cardWidgets = [];
+          for (var course in courses) {
+            final courseData = course.data();
+            final courseName = courseData['courseName'];
+            final courseCode = courseData['courseCode'];
+            final yearOfBatch = courseData['yearOfBatch'];
+            final imagePath = courseData['imagePath'];
+            cardWidgets.add(
+              CardWidget(
+                newCourse: Course(
+                    courseName: courseName,
+                    courseCode: courseCode,
+                    imagePath: imagePath,
+                    yearOfBatch: yearOfBatch.toString()),
+                onTabActive: false,
+              ),
+            );
+          }
+          return ListView.builder(
+              itemCount: cardWidgets.length,
+              itemBuilder:(context, int){
+                return cardWidgets[int];
+              }
+          );
+        }
+      },
+    );
   }
 }
 

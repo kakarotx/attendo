@@ -6,28 +6,18 @@ import 'package:flutter/material.dart';
 class Course extends ChangeNotifier{
 
   //constructor for COURSE class
-  Course({this.courseCode, this.yearOfBatch, this.courseName});
+  Course({this.courseCode, this.yearOfBatch, this.courseName, this.imagePath});
 
   Color accentColor;
   //required variables for any Course
-  int courseCode;
+  String courseCode;
   String courseName;
   String yearOfBatch;
-
+  String imagePath;
   String imageAsset = 'assets/images/artWork/art01.jpg';
 
   //we will set it to the UserName
   // String courseTeacher;
   // int semesterCount;
-
-  setCourseCodeTo(int code){
-    courseCode=code;
-  }
-  setCourseNameTo(String name){
-    courseName=name;
-  }
-  setYearOfBatchTo(String year){
-    yearOfBatch = year;
-  }
 
 }

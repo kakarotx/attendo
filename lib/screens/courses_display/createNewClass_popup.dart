@@ -1,14 +1,11 @@
 import 'dart:math';
 import 'package:attendo/modals/course_class.dart';
-import 'package:attendo/modals/list_of_course_details.dart';
-import 'package:attendo/widgets/card_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 
 final coursesRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
@@ -36,7 +33,7 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
   //variables to create a new Course
   String courseName;
   String yearOfBatch;
-  int courseCode;
+  String courseCode;
   //variables for Generating a new non-repeating Random Integer
   List<int> randomIntList = [];
 
@@ -98,26 +95,30 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
   }
 
   uploadCourseDataToCloud(
-      {String nameOfCourse, int codeOfCourse, String year}) async {
+      {String nameOfCourse, String codeOfCourse, String year, String imagePath}) async {
     ///this will upload to a Universal Collections of all Courses
     final DocumentSnapshot courseDoc =
         await coursesRef.doc(courseCode.toString()).get();
     coursesRef.doc(courseCode.toString()).set({
       'courseName': nameOfCourse,
       'courseCode': codeOfCourse,
+      'createdBy': currentUser.displayName,
       'yearOfBatch': year,
+      'imagePath': imagePath
     });
 
-    ///this will upload to a User Collection > CoursesCreated >
+    ///this will upload to User Collection > CoursesCreated >
     ///means Only courses created by that particular user
     userRef
         .doc(currentUser.uid.toString())
         .collection('createdCoursesByUser')
-        .doc(courseCode.toString())
+        .doc(courseCode)
         .set({
       "courseName": nameOfCourse,
-      'courseCode': codeOfCourse.toString(),
-      'createdBy': currentUser.displayName
+      'courseCode': codeOfCourse,
+      'createdBy': currentUser.displayName,
+      'imagePath': imagePath,
+      'yearOfBatch': year,
     });
   }
 
@@ -185,7 +186,8 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
               onPressed: () {
                 print('creating new class');
                 //generate Random courseCode
-                courseCode = 9999 + Random().nextInt(99999 - 9999);
+                int classCode = 9999 + Random().nextInt(99999 - 9999);
+                courseCode = classCode.toString();
 
                 //generated a random int which is passed through ImageList index
                 //TODO: make a function so that images don't ListOfCourseCard
@@ -198,24 +200,16 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
                   ///later when we will join class, we will check in this list
                   ///whether the enteredCode exists or not
                   ///Later we will check enteredCode in database
-                  Provider.of<ListOfCourseDetails>(context, listen: false)
-                      .addItemToCourseCodeList(courseCode.toString());
 
-                  ///adding the Course Object to the ListOfCard
-                  Provider.of<ListOfCourseDetails>(context, listen: false)
-                      .addItemToCourseList(
-                    CardWidget(
-                      newCourse: Course(
-                          yearOfBatch: yearOfBatch,
-                          courseCode: courseCode,
-                          courseName: courseName),
-                      imagePath: imagePaths[randomInt],
-                    ),
-                  );
+
                   widget.toggleScreenCallBack();
                   _showToast(toastMsg: 'Class Created', toastIcon: Icons.check);
                 }
-                Navigator.pop(context);
+                Navigator.pop(context, Course(
+                    yearOfBatch: yearOfBatch,
+                    courseCode: courseCode,
+                    courseName: courseName,
+                    imagePath: imagePaths[randomInt]),);
 
                 ///toast msg when any field is left and create class is pressed
                 _showToast(
@@ -226,7 +220,8 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
                 uploadCourseDataToCloud(
                     codeOfCourse: courseCode,
                     nameOfCourse: courseName,
-                    year: yearOfBatch);
+                    year: yearOfBatch,
+                imagePath: imagePaths[randomInt]);
               },
               child: Text(
                 'Create Class',
@@ -241,6 +236,7 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
 }
 
 ///DANGER AHEAD-
+///
 //TODO: create a non repeating random number function
 //outside of class
 //failed attempt to create a RandomGenerator

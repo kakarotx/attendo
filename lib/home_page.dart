@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -56,11 +57,12 @@ class _HomePageState extends State<HomePage>
       CreatedClassScreen(user: user,),
       UserProfile(),
       NotificationPage(),
-      JoinedClassScreen(),
+      JoinedClassScreen(user: user,),
     ];
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
       home: CupertinoTabScaffold(
+
           tabBar: CupertinoTabBar(
             items: [
               ///this is where we are setting aur bottom ICONS
@@ -77,7 +79,7 @@ class _HomePageState extends State<HomePage>
                 label: 'Setting',
                   icon: Icon(CupertinoIcons.settings_solid)),
             ],
-            currentIndex: pageIndex,
+            // currentIndex: pageIndex,
           ),
           tabBuilder: (context, index) {
             return CupertinoTabView(

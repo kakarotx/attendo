@@ -55,7 +55,8 @@ class SignInPage extends StatelessWidget {
     userCollection.doc(user.uid.toString()).set(
         {
           'userEmail': user.email,
-          'dateTime' : DateTime.now(),
+          'usedId': user.uid,
+          'lastLogin' : DateTime.now(),
         });
 
     print('qwerty:: ${user.email}');

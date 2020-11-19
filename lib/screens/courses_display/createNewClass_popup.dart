@@ -11,29 +11,30 @@ final coursesRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
 
 ///later we will pass the current user through Constructors
-final currentUser = FirebaseAuth.instance.currentUser;
 
 //style
 const bottomDrawerStyle =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
 
 ///this is popUp_Screen to create New class
-class CreateNewClassScreen extends StatefulWidget {
-  CreateNewClassScreen({this.toggleScreenCallBack});
+class CreateNewClassPopUp extends StatefulWidget {
+  CreateNewClassPopUp({this.toggleScreenCallBack, this.currentUser});
+  final User currentUser;
 
   ///this is a callback, which is called when we press createNewClass,
   ///this chances the [NO CREATED CLASS screen] to LIST_OF_CREATED_CLASSES SCREEN
   final Function toggleScreenCallBack;
 
   @override
-  _CreateNewClassScreenState createState() => _CreateNewClassScreenState();
+  _CreateNewClassPopUpState createState() => _CreateNewClassPopUpState();
 }
 
-class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
+class _CreateNewClassPopUpState extends State<CreateNewClassPopUp> {
   //variables to create a new Course
   String courseName;
   String yearOfBatch;
   String courseCode;
+  String teacherImageUrl;
   //variables for Generating a new non-repeating Random Integer
   List<int> randomIntList = [];
 
@@ -94,31 +95,36 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
     );
   }
 
+
+  ///this data has CourseDetails
+  ///When user create new Course this data is uploaded
   uploadCourseDataToCloud(
-      {String nameOfCourse, String codeOfCourse, String year, String imagePath}) async {
+      {String nameOfCourse, String codeOfCourse, String year, String imagePath,}) async {
     ///this will upload to a Universal Collections of all Courses
     final DocumentSnapshot courseDoc =
         await coursesRef.doc(courseCode.toString()).get();
     coursesRef.doc(courseCode.toString()).set({
       'courseName': nameOfCourse,
       'courseCode': codeOfCourse,
-      'createdBy': currentUser.displayName,
+      'createdBy': widget.currentUser.displayName,
       'yearOfBatch': year,
-      'imagePath': imagePath
+      'imagePath': imagePath,
+      'teacherImageUrl': widget.currentUser.photoURL
     });
 
     ///this will upload to User Collection > CoursesCreated >
     ///means Only courses created by that particular user
     userRef
-        .doc(currentUser.uid.toString())
+        .doc(widget.currentUser.uid.toString())
         .collection('createdCoursesByUser')
         .doc(courseCode)
         .set({
       "courseName": nameOfCourse,
       'courseCode': codeOfCourse,
-      'createdBy': currentUser.displayName,
+      'createdBy': widget.currentUser.displayName,
       'imagePath': imagePath,
       'yearOfBatch': year,
+      'teacherImageUrl': widget.currentUser.photoURL
     });
   }
 
@@ -206,6 +212,8 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
                   _showToast(toastMsg: 'Class Created', toastIcon: Icons.check);
                 }
                 Navigator.pop(context, Course(
+                  teacherImageUrl: widget.currentUser.photoURL,
+                    teacherName: widget.currentUser.displayName,
                     yearOfBatch: yearOfBatch,
                     courseCode: courseCode,
                     courseName: courseName,

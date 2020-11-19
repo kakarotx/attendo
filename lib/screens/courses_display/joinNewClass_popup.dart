@@ -1,8 +1,7 @@
 import 'package:attendo/modals/course_class.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 //style
 const bottomDrawerStyle =
     TextStyle(color: CupertinoColors.black, fontSize: 20, fontWeight: FontWeight.bold);
@@ -26,6 +25,8 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
   String yearOfBatch;
   String courseCode;
   String imagePath;
+  String teacherName;
+  String teacherImageUrl;
 
   getCourseDataFor({String enteredClassCode}) async {
     final DocumentSnapshot courseData =
@@ -36,6 +37,8 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
       courseCode = courseData.data()['courseCode'];
       yearOfBatch = courseData.data()['yearOfBatch'];
       imagePath = courseData.data()['imagePath'];
+      teacherName = courseData.data()['createdBy'];
+      teacherImageUrl = courseData.data()['teacherImageUrl'];
       print('this is $courseName');
     } catch (e) {
       print('qwerty error::::$e');
@@ -51,7 +54,7 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
         .set({
       "courseName": courseName,
       'courseCode': courseCode,
-      'teacher': widget.user.displayName,
+      'createdBy': teacherName,
       'imagePath': imagePath,
       'yearOfBatch': yearOfBatch,
     });
@@ -64,7 +67,7 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
         .set({
       "emailId": widget.user.email,
       "studentName": widget.user.displayName,
-      "photoUrl": widget.user.photoURL
+      "studentPhotoUrl": widget.user.photoURL
     });
   }
 
@@ -144,10 +147,12 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
 
     widget.toggleScreenCallBack();
     Navigator.pop(context, Course(
+      teacherName: teacherName,
       imagePath: imagePath,
       yearOfBatch: yearOfBatch,
       courseCode: courseCode,
-      courseName: courseName
+      courseName: courseName,
+      teacherImageUrl: teacherImageUrl
     ));
   }
 }

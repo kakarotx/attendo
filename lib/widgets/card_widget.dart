@@ -1,29 +1,21 @@
 
 import 'package:attendo/modals/course_class.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:attendo/screens/attendence_screens/course_home_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 12);
 const double cardBorderRadius = 10;
 
 class CardWidget extends StatelessWidget {
-  CardWidget({this.newCourse,this.onTabActive });
+  CardWidget({this.newCourse,this.onTab});
 
   final Course newCourse;
-  final bool onTabActive;
-
+  final Function onTab;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTabActive? () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            // fullscreenDialog: true,
-            builder: (context) => CupertinoSegmentedControlDemo(course: newCourse),),
-        );
-      }:null,
+      onTap: onTab,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -71,7 +63,7 @@ class CardWidget extends StatelessWidget {
                 height: 40,
               ),
               Text(
-                'Teacher: UserName',
+                'Teacher: ${newCourse.teacherName}',
                 style: cardTextStyle,
               ),
             ],

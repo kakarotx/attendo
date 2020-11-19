@@ -1,8 +1,9 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/screens/courses_display/createNewClass_popup.dart';
+import 'package:attendo/screens/particular_course_pages/teacher_course_home_screen.dart';
 import 'package:attendo/widgets/card_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'createNewClass_popup.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,7 +28,6 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
   ///zeroCC = zero_created_classes
   ///this above variable will toggle that screen
   bool zeroCC = true;
-
 
   ///this function will toggle the ZeroCC screen
   void toggleZeroCCScreen() {
@@ -54,8 +54,9 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
                       print('+ pressed');
                       newCourse = await showCupertinoModalBottomSheet<Course>(
                         context: context,
-                        builder: (context) => CreateNewClassScreen(
+                        builder: (context) => CreateNewClassPopUp(
                           toggleScreenCallBack: toggleZeroCCScreen,
+                          currentUser: widget.user,
                         ),
                       );
                     },
@@ -89,14 +90,32 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
             final courseCode = courseData['courseCode'];
             final yearOfBatch = courseData['yearOfBatch'];
             final imagePath = courseData['imagePath'];
+            final teacherName = courseData['createdBy'];
+            final teacherImageUrl= courseData['teacherImageUrl'];
             cardWidgets.add(
               CardWidget(
                 newCourse: Course(
+                  teacherImageUrl: teacherImageUrl,
+                teacherName: teacherName,
                     courseName: courseName,
                     courseCode: courseCode,
                     imagePath: imagePath,
                     yearOfBatch: yearOfBatch.toString()),
-                onTabActive: true,
+                onTab: (){
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => CourseHomePageForTeacher(
+                        user: widget.user,
+                        course: Course(
+                          teacherImageUrl: teacherImageUrl,
+                          teacherName: teacherName,
+                          courseName: courseName,
+                          courseCode: courseCode,
+                          imagePath: imagePath,
+                          yearOfBatch: yearOfBatch.toString()),),),
+                  );
+                },
               ),
             );
           }

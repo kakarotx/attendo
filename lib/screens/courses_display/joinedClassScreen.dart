@@ -1,5 +1,6 @@
 import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/screens/courses_display/joinNewClass_popup.dart';
+import 'package:attendo/screens/particular_course_pages/student_course_home_page.dart';
 import 'package:attendo/widgets/card_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,14 +81,30 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
             final courseCode = courseData['courseCode'];
             final yearOfBatch = courseData['yearOfBatch'];
             final imagePath = courseData['imagePath'];
+            final teacherName = courseData['createdBy'];
+            final teacherImageUrl = courseData['teacherImageUrl'];
             cardWidgets.add(
               CardWidget(
                 newCourse: Course(
+                  teacherImageUrl: teacherImageUrl,
+                    teacherName: teacherName,
                     courseName: courseName,
                     courseCode: courseCode,
                     imagePath: imagePath,
                     yearOfBatch: yearOfBatch.toString()),
-                onTabActive: false,
+                onTab: (){
+                  Navigator.push(context, CupertinoPageRoute(builder: (context){
+                    return CourseHomePageForStudent(
+                      user: widget.user,
+                      course:  Course(
+                        teacherImageUrl: teacherImageUrl,
+                        teacherName: teacherName,
+                        courseName: courseName,
+                        courseCode: courseCode,
+                        imagePath: imagePath,
+                        yearOfBatch: yearOfBatch.toString()),);
+                  }));
+                },
               ),
             );
           }

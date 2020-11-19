@@ -10,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 class SignInPage extends StatelessWidget {
   final _firebaseAuth = FirebaseAuth.instance;
 
-
   ///this is the same user who logged in, but also contains
   ///some more properties
   User user;
@@ -56,6 +55,8 @@ class SignInPage extends StatelessWidget {
         {
           'userEmail': user.email,
           'usedId': user.uid,
+          'userImageUrl': user.photoURL,
+          'userDisplayName': user.displayName,
           'lastLogin' : DateTime.now(),
         });
 

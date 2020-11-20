@@ -1,4 +1,5 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/screens/attendence_screens/create_new.dart';
 import 'package:attendo/screens/courses_display/createNewClass_popup.dart';
 import 'package:attendo/screens/particular_course_pages/teacher_course_home_screen.dart';
 import 'package:attendo/widgets/card_widget.dart';
@@ -22,7 +23,6 @@ class CreatedClassScreen extends StatefulWidget {
 
 class _CreatedClassScreenState extends State<CreatedClassScreen> {
   List<CardWidget> listOfCourses;
-  Course newCourse;
 
   ///when there will be no classes, we will show [NO CLASSES, CREATE NEW];
   ///zeroCC = zero_created_classes
@@ -36,45 +36,96 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return
+      CupertinoPageScaffold(
+        resizeToAvoidBottomInset: false,
         child: NestedScrollView(
             headerSliverBuilder: (context, bool innerBoxIsScrolled) {
               return [
                 CupertinoSliverNavigationBar(
                   largeTitle: Text('Courses'),
                   trailing: CupertinoButton(
-                    padding: EdgeInsets.only(bottom: 2),
-                    child: Icon(
-                      CupertinoIcons.add,
+                    padding: EdgeInsets.zero,
+                    child: Text(
+                      'Create'
                       // size: 20,
                     ),
                     onPressed: () async {
                       print('+ pressed');
-                      newCourse = await showCupertinoModalBottomSheet<Course>(
-                        context: context,
-                        builder: (context) => CreateNewClassPopUp(
-                          toggleScreenCallBack: toggleZeroCCScreen,
-                          currentUser: widget.user,
-                        ),
-                      );
+                      Navigator.push(context, CupertinoPageRoute(
+                          builder: (context)=>CreateClass(currentUser: widget.user,),fullscreenDialog: true));
+                      // await showCupertinoModalBottomSheet<Course>(
+                      //   context: context,
+                      //   builder: (context) => CreateNewClassPopUp(
+                      //     toggleScreenCallBack: toggleZeroCCScreen,
+                      //     currentUser: widget.user,
+                      //   ),
+                      // );
                     },
                   ),
                 ),
               ];
             },
-            body:buildCards()),
+            body:buildCourseCards()),
             ///TODO: ZeroClass Screen to be made
           ///and it will be controlled here with a bool
-
-      ),
       // child:
     );
   }
 
+  deleteTheCourse(BuildContext context, Course course){
+    confirmDeleteAlert(context, course);
+  }
+
+  ///this will show a Dailog after we press delete Course button
+  ///which has 2 options, [cancel] and [delete]
+  void confirmDeleteAlert(BuildContext context, Course course) {
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text("Confirm delete"),
+            content: Text("Do you want to delete the Course?"),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel")),
+              CupertinoDialogAction(
+                  textStyle: TextStyle(color: CupertinoColors.destructiveRed),
+                  // isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    addCourseDataToDeletedCourseCollection(course);
+                    deleteTheCourseFromCloud(course);
+                  },
+                  child: Text("Delete")),
+            ],
+          );
+        });
+  }
+
+  ///we are the deleting the Course from [CoursesDetails] collection
+  void deleteTheCourseFromCloud(Course course) {
+    courseRef.doc(course.courseCode).delete();
+    userRef.doc(widget.user.uid).collection('createdCoursesByUser').doc(course.courseCode).delete();
+  }
+
+  ///I made a Collection on firebase [DeletedCourses],
+  ///because Student have to be notified that the class is deleted
+  ///ON Student PAGE, I have implemented a logic which checks if
+  ///the Document with the COURSE CODE exists on [DeletedCourses]
+  addCourseDataToDeletedCourseCollection(Course course){
+    deletedCoursesRef.doc(course.courseCode).set({
+      'courseName': course.courseName,
+      'teacherName': course.teacherName
+    });
+  }
+
+
   ///building List of CustomCards of Courses after  we add a course
-  buildCards() {
+  buildCourseCards() {
     //courseRef.snapshots(),
     return StreamBuilder<QuerySnapshot>(
       stream:userRef.doc(widget.user.uid).collection('createdCoursesByUser').snapshots(),
@@ -101,7 +152,7 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
                     courseCode: courseCode,
                     imagePath: imagePath,
                     yearOfBatch: yearOfBatch.toString()),
-                onTab: (){
+                onCardTab: (){
                   Navigator.push(
                     context,
                     CupertinoPageRoute(

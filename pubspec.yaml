@@ -27,6 +27,7 @@ dev_dependencies:
   firebase_auth: ^0.18.1+2
   modal_bottom_sheet: ^1.0.0+1
   flutter_local_notifications: ^1.4.4+2
+  azlistview: ^1.0.2
 
 flutter:
 

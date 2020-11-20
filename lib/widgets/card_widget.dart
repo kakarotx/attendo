@@ -1,21 +1,20 @@
-
 import 'package:attendo/modals/course_class.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 
 const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 12);
 const double cardBorderRadius = 10;
 
 class CardWidget extends StatelessWidget {
-  CardWidget({this.newCourse,this.onTab});
+  CardWidget({this.newCourse,this.onCardTab});
 
   final Course newCourse;
-  final Function onTab;
+  final Function onCardTab;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTab,
+      onTap: onCardTab,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

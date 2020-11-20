@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 ///when Teacher tab on CourseCard, that will take us here
 ///This page will contain details like::
 ///[No of Students][Total Classes taken] [List of Students] and
@@ -18,6 +19,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// This Page will be shown to Teachers
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
+final userRef = FirebaseFirestore.instance.collection('users');
+final deletedCoursesRef = FirebaseFirestore.instance.collection('deletedCourses');
+
+
 
 class CourseHomePageForTeacher extends StatefulWidget {
   CourseHomePageForTeacher({this.course, this.user});
@@ -112,12 +117,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     );
   }
 
-  // getDataOfThatParticularCourse({String courseCode}) async{
-  //   final courseData = await courseRef.doc(courseCode).get();
-  //   final String createdBy = await courseData.data()['createdBy'];
-  //   teacherName = createdBy;
-  // }
-
+  ///this contains [TOTAL STUDENTS] and [TOTAL CLASS TAKEN] details
   Widget particularCourseDetailsScreen() {
     //TODO: fetch data of a particular from Cloud and Fill in the constructor
     // getDataOfThatParticularCourse(courseCode: widget.course.courseCode);
@@ -139,7 +139,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
             children: [
               takeAttendenceButton(),
               CardWidget(
-                onTab: null,
+                onCardTab: null,
                 newCourse: Course(
                   teacherImageUrl: teacherImageUrl,
                   courseCode: courseCode,
@@ -157,6 +157,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     );
   }
 
+  ///this will navigate to the Attendence page where we can take attendence
   Widget takeAttendenceButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 4, left: 20, right: 20, bottom: 8),
@@ -209,6 +210,9 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     );
   }
 
+
+  ///when we click on 3dots ICONS at top right
+  ///this sheet appears from bottom and has 3-4 options
   myActionSheet(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 14),
@@ -233,8 +237,8 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
               child: Text('Download AttendenceSheet')),
           CupertinoActionSheetAction(
               onPressed: () {
-                // Navigator.pop(context);
-                confirmDeleteAlert(context);
+                Navigator.pop(context);
+                showDeleteDialogAlert(context, widget.course);
               },
               child: Text(
                 'Delete Class',
@@ -249,8 +253,16 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       ),
     );
   }
-
-  void confirmDeleteAlert(BuildContext context) {
+  
+  
+  showDeleteDialogAlert(BuildContext context, Course course){
+    confirmDeleteAlert(context, course);
+  }
+  
+  
+  ///this will show a Dailog after we press delete Course button
+  ///which has 2 options, [cancel] and [delete]
+  void confirmDeleteAlert(BuildContext context, Course course) {
     showCupertinoDialog(
         context: context,
         builder: (context) {
@@ -259,20 +271,18 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
             content: Text("Do you want to delete the Course?"),
             actions: <Widget>[
               CupertinoDialogAction(
-                  // isDefaultAction: true,
                   onPressed: () {
-                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
                   child: Text("Cancel")),
               CupertinoDialogAction(
-                  textStyle: TextStyle(color: Colors.red),
+                  textStyle: TextStyle(color: CupertinoColors.destructiveRed),
                   // isDefaultAction: true,
                   onPressed: () {
-                    Navigator.pop(context);
-                    deleteTheCourseFromCloud();
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                     Navigator.pop(context);
+                    addCourseDataToDeletedCourseCollection(course);
+                    deleteTheCourseFromCloud(course);
+                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context)=>HomePage()), (route) => false);
                   },
                   child: Text("Delete")),
             ],
@@ -280,5 +290,21 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
         });
   }
 
-  void deleteTheCourseFromCloud() {}
+  ///we are the deleting the Course from [CoursesDetails] collection
+  void deleteTheCourseFromCloud(Course course) {
+    courseRef.doc(course.courseCode).delete();
+    userRef.doc(widget.user.uid).collection('createdCoursesByUser').doc(course.courseCode).delete();
+  }
+
+  ///I made a Collection on firebase [DeletedCourses],
+  ///because Student have to be notified that the class is deleted
+  ///ON Student PAGE, I have implemented a logic which checks if
+  ///the Document with the COURSE CODE exists on [DeletedCourses]
+  addCourseDataToDeletedCourseCollection(Course course){
+    deletedCoursesRef.doc(course.courseCode).set({
+      'courseName': course.courseName,
+      'teacherName': course.teacherName
+    });
+  }
+
 }

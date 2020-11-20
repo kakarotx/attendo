@@ -52,16 +52,14 @@ class _HomePageState extends State<HomePage>
 
   ///welcome Page will be shown after user sign in with google
   ///basically Welcome Home page
-  CupertinoApp welcomePage(BuildContext context) {
+  CupertinoTabScaffold welcomePage(BuildContext context) {
     List homeScreenList = [
       CreatedClassScreen(user: user,),
-      UserProfile(),
+      UserProfile(user: user,),
       NotificationPage(),
       JoinedClassScreen(user: user,),
     ];
-    return CupertinoApp(
-      debugShowCheckedModeBanner: false,
-      home: CupertinoTabScaffold(
+    return CupertinoTabScaffold(
 
           tabBar: CupertinoTabBar(
             items: [
@@ -76,20 +74,20 @@ class _HomePageState extends State<HomePage>
                   label: 'Alerts',
                   icon: Icon(CupertinoIcons.bell_solid)),
               BottomNavigationBarItem(
-                label: 'Setting',
-                  icon: Icon(CupertinoIcons.settings_solid)),
+                label: 'Joined',
+                  icon: Icon(CupertinoIcons.xmark_circle_fill)),
             ],
             // currentIndex: pageIndex,
           ),
-          tabBuilder: (context, index) {
+          tabBuilder: (context, index, ) {
             return CupertinoTabView(
+
               builder: (context) {
                 return homeScreenList[index];
               },
             );
-          }),
-    );
-  }
+          },
+    );}
 
   @override
   Widget build(BuildContext context) {

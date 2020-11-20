@@ -42,7 +42,7 @@ class _NotificationPageState extends State<NotificationPage> {
         new NotificationDetails(androidDetails, iOSDetails);
 
     await fltrNotification.show(
-        0, "pulkit", "You created a Task", generalNotificationDetails,
+        0, sender, message, generalNotificationDetails,
         payload: "Task");
   }
 
@@ -84,7 +84,7 @@ class NotificationCard extends StatelessWidget {
   final String teacherImageUrl;
   final String textMessage;
 
-  List<String> monthsList = [
+  final List<String> monthsList = [
     'Jan',
     'Feb',
     'Mar',

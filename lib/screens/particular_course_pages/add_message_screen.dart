@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:azlistview/azlistview.dart';
 
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
@@ -29,6 +30,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   TextEditingController textEditingController;
   String teacherImageUrl;
   FlutterLocalNotificationsPlugin fltrNotification;
+
 
   @override
   void initState() {
@@ -121,7 +123,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: courseRef
           .doc(course.courseCode)
-          .collection('messagesByTeacher')
+          .collection('messagesByTeacher').orderBy('sendTime', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -146,6 +148,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             shrinkWrap: true,
             itemCount: messagesWidgets.length,
             itemBuilder: (context, int) {
+              //for displaying OnScreen Notification
               _showNotifications(sender: messagesWidgets.first.teacherName, message: messagesWidgets.first.textMessage);
               return messagesWidgets[int];
             },
@@ -163,7 +166,7 @@ class MessageCard extends StatelessWidget {
   final String teacherImageUrl;
   final String textMessage;
 
-  List<String> monthsList = [
+  final List<String> monthsList = [
     'Jan',
     'Feb',
     'Mar',

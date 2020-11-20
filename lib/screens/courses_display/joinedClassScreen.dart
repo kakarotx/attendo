@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 ///this screen displays all the classes joined by you
-final _fireStore = FirebaseFirestore.instance;
+// final _fireStore = FirebaseFirestore.instance;
 
 class JoinedClassScreen extends StatefulWidget {
   JoinedClassScreen({this.user});
@@ -31,9 +31,8 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
         child: NestedScrollView(
             headerSliverBuilder:(context, bool innerBoxIsScrolled)
             {
@@ -42,11 +41,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
 
                   largeTitle: Text('Enrolled'),
                   trailing: CupertinoButton(
-                    padding: EdgeInsets.only(bottom: 2),
-                    child: Icon(
-                      CupertinoIcons.add,
-                      // size: 20,
-                    ),
+                    padding: EdgeInsets.zero,
                     onPressed: () async{
                       joinedCourse =
                       await showCupertinoModalBottomSheet(
@@ -54,6 +49,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
                         builder: (BuildContext context) => JoinNewClassPopup(toggleScreenCallBack: toggleZeroCCScreen,user: widget.user,),
                       );
                     },
+                    child: Text('Join'),
                   ),                                                              ////,
                 ),
               ];
@@ -62,63 +58,69 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
 
       ),
       // child:
-    ));
-  }
-
-  buildListOfJoinedClass() {
-    //courseRef.snapshots(),
-    return StreamBuilder<QuerySnapshot>(
-      stream:userRef.doc(widget.user.uid).collection('joinedCoursesByUser').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CupertinoActivityIndicator();
-        } else {
-          final courses = snapshot.data.docs;
-          List<CardWidget> cardWidgets = [];
-          for (var course in courses) {
-            final courseData = course.data();
-            final courseName = courseData['courseName'];
-            final courseCode = courseData['courseCode'];
-            final yearOfBatch = courseData['yearOfBatch'];
-            final imagePath = courseData['imagePath'];
-            final teacherName = courseData['createdBy'];
-            final teacherImageUrl = courseData['teacherImageUrl'];
-            cardWidgets.add(
-              CardWidget(
-                newCourse: Course(
-                  teacherImageUrl: teacherImageUrl,
-                    teacherName: teacherName,
-                    courseName: courseName,
-                    courseCode: courseCode,
-                    imagePath: imagePath,
-                    yearOfBatch: yearOfBatch.toString()),
-                onTab: (){
-                  Navigator.push(context, CupertinoPageRoute(builder: (context){
-                    return CourseHomePageForStudent(
-                      user: widget.user,
-                      course:  Course(
-                        teacherImageUrl: teacherImageUrl,
-                        teacherName: teacherName,
-                        courseName: courseName,
-                        courseCode: courseCode,
-                        imagePath: imagePath,
-                        yearOfBatch: yearOfBatch.toString()),);
-                  }));
-                },
-              ),
-            );
-          }
-          return ListView.builder(
-              itemCount: cardWidgets.length,
-              itemBuilder:(context, int){
-                return cardWidgets[int];
-              }
-          );
-        }
-      },
     );
   }
-}
+
+
+
+
+  buildListOfJoinedClass() {
+      ///
+      return StreamBuilder<QuerySnapshot>(
+        stream:userRef.doc(widget.user.uid).collection('joinedCoursesByUser').snapshots(),
+        builder: (context, snapshot,) {
+          if (!snapshot.hasData) {
+            return CupertinoActivityIndicator();
+          } else {
+            final courses = snapshot.data.docs;
+            List<CardWidget> cardWidgets = [];
+            for (var course in courses) {
+              final courseData = course.data();
+              final courseName = courseData['courseName'];
+              final courseCode = courseData['courseCode'];
+              final yearOfBatch = courseData['yearOfBatch'];
+              final imagePath = courseData['imagePath'];
+              final teacherName = courseData['createdBy'];
+              final teacherImageUrl = courseData['teacherImageUrl'];
+              cardWidgets.add(
+                CardWidget(
+                  newCourse: Course(
+                      teacherImageUrl: teacherImageUrl,
+                      teacherName: teacherName,
+                      courseName: courseName,
+                      courseCode: courseCode,
+                      imagePath: imagePath,
+                      yearOfBatch: yearOfBatch.toString()),
+                  onCardTab: (){
+                    Navigator.push(context, CupertinoPageRoute(builder: (context){
+                      return CourseHomePageForStudent(
+                        user: widget.user,
+                        course:  Course(
+                            teacherImageUrl: teacherImageUrl,
+                            teacherName: teacherName,
+                            courseName: courseName,
+                            courseCode: courseCode,
+                            imagePath: imagePath,
+                            yearOfBatch: yearOfBatch.toString()),);
+                    }));
+                  },
+                ),
+              );
+            }
+            return ListView.builder(
+                itemCount: cardWidgets.length,
+                itemBuilder:(context, int){
+                  return cardWidgets[int];
+                }
+            );
+          }
+        },
+      );
+
+    }
+
+
+  }
 
 ///LongPressEndDetails
 

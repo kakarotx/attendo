@@ -31,44 +31,57 @@ class _JoinNewClassPopupState extends State<JoinNewClassPopup> {
   getCourseDataFor({String enteredClassCode}) async {
     final DocumentSnapshot courseData =
         await courseRef.doc(enteredClassCode).get();
-
-    try {
-      courseName = courseData.data()['courseName'];
-      courseCode = courseData.data()['courseCode'];
-      yearOfBatch = courseData.data()['yearOfBatch'];
-      imagePath = courseData.data()['imagePath'];
-      teacherName = courseData.data()['createdBy'];
-      teacherImageUrl = courseData.data()['teacherImageUrl'];
-      print('this is $courseName');
-    } catch (e) {
-      print('qwerty error::::$e');
+    if(courseData.exists){
+      try {
+        courseName = courseData.data()['courseName'];
+        courseCode = courseData.data()['courseCode'];
+        yearOfBatch = courseData.data()['yearOfBatch'];
+        imagePath = courseData.data()['imagePath'];
+        teacherName = courseData.data()['createdBy'];
+        teacherImageUrl = courseData.data()['teacherImageUrl'];
+        print('this is $courseName');
+      } catch (e) {
+        print('qwerty error::::$e');
+      }
     }
+
   }
 
   ///user>ClassJoinedByUser>
-  uploadJoinedClassDataToCloud({String courseName,String courseCode,String imagePath,String yearOfBatch}){
-    userRef
-        .doc(widget.user.uid)
-        .collection('joinedCoursesByUser')
-        .doc(courseCode)
-        .set({
-      "courseName": courseName,
-      'courseCode': courseCode,
-      'createdBy': teacherName,
-      'imagePath': imagePath,
-      'yearOfBatch': yearOfBatch,
-    });
+  uploadJoinedClassDataToCloud({String courseName,String courseCode,String imagePath,String yearOfBatch}) async{
+    final DocumentSnapshot doc =
+    await courseRef.doc(enteredClassCode).get();
+
+    if(doc.exists)
+      {
+        userRef
+            .doc(widget.user.uid)
+            .collection('joinedCoursesByUser')
+            .doc(courseCode)
+            .set({
+          "courseName": courseName,
+          'courseCode': courseCode,
+          'createdBy': teacherName,
+          'imagePath': imagePath,
+          'yearOfBatch': yearOfBatch,
+        });
+      }
   }
 
-  addStudentToTheCloud({String courseCode}){
-    courseRef.doc(courseCode)
-        .collection('studentsEnrolled')
-        .doc(widget.user.uid)
-        .set({
-      "emailId": widget.user.email,
-      "studentName": widget.user.displayName,
-      "studentPhotoUrl": widget.user.photoURL
-    });
+  addStudentToTheCloud({String courseCode}) async{
+    final doc = await courseRef.doc(courseCode).get();
+    if(doc.exists)
+    {
+      courseRef.doc(courseCode)
+          .collection('studentsEnrolled')
+          .doc(widget.user.uid)
+          .set({
+        "emailId": widget.user.email,
+        "studentName": widget.user.displayName,
+        "studentPhotoUrl": widget.user.photoURL
+      });
+
+    }
   }
 
   @override

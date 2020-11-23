@@ -1,6 +1,7 @@
+import 'dart:html';
+
 import 'package:attendo/screens/courses_display/createdClassScreen.dart';
 import 'package:attendo/screens/courses_display/joinedClassScreen.dart';
-import 'package:attendo/screens/other_screens/notifications_page.dart';
 import 'package:attendo/screens/other_screens/user_profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,11 @@ class _HomePageState extends State<HomePage>
   String userName;
   String userEmail;
   String userId;
+
+  final GlobalKey<NavigatorState> firstTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> secondTabNavKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> thirdTabNavKey = GlobalKey<NavigatorState>();
+
 
 
   //variables for PageView
@@ -52,41 +58,51 @@ class _HomePageState extends State<HomePage>
 
   ///welcome Page will be shown after user sign in with google
   ///basically Welcome Home page
-  CupertinoTabScaffold welcomePage(BuildContext context) {
+  CupertinoApp welcomePage(BuildContext context) {
+
+    // final ListOfKeys = [
+    //   firstTabNavKey,
+    //   secondTabNavKey,
+    //   thirdTabNavKey
+    // ];
+
     List homeScreenList = [
       CreatedClassScreen(user: user,),
       UserProfile(user: user,),
-      NotificationPage(),
+      // NotificationPage(),
       JoinedClassScreen(user: user,),
     ];
-    return CupertinoTabScaffold(
-
-          tabBar: CupertinoTabBar(
-            items: [
-              ///this is where we are setting aur bottom ICONS
-              BottomNavigationBarItem(
-                label: 'AddClass',
-                  icon: Icon(CupertinoIcons.add_circled_solid)),
-              BottomNavigationBarItem(
-                label: 'Profile',
-                  icon: Icon(CupertinoIcons.person_solid)),
-              BottomNavigationBarItem(
-                  label: 'Alerts',
-                  icon: Icon(CupertinoIcons.bell_solid)),
-              BottomNavigationBarItem(
-                label: 'Joined',
-                  icon: Icon(CupertinoIcons.xmark_circle_fill)),
-            ],
-            // currentIndex: pageIndex,
-          ),
-          tabBuilder: (context, index, ) {
-            return CupertinoTabView(
-
-              builder: (context) {
-                return homeScreenList[index];
-              },
-            );
-          },
+    return CupertinoApp(
+      theme: CupertinoThemeData(brightness: Brightness.light),
+      debugShowCheckedModeBanner: false,
+      home: CupertinoTabScaffold(
+            tabBar: CupertinoTabBar(
+              items: [
+                ///this is where we are setting aur bottom ICONS
+                BottomNavigationBarItem(
+                  label: 'AddClass',
+                    icon: Icon(CupertinoIcons.add_circled_solid)),
+                BottomNavigationBarItem(
+                  label: 'Profile',
+                    icon: Icon(CupertinoIcons.person_solid)),
+                // BottomNavigationBarItem(
+                //     label: 'Alerts',
+                //     icon: Icon(CupertinoIcons.bell_solid)),
+                BottomNavigationBarItem(
+                  label: 'Joined',
+                    icon: Icon(CupertinoIcons.xmark_circle_fill)),
+              ],
+              // currentIndex: pageIndex,
+            ),
+            tabBuilder: (context, index, ) {
+              return CupertinoTabView(
+                // navigatorKey: ListOfKeys[index],
+                builder: (context) {
+                  return homeScreenList[index];
+                },
+              );
+            },
+      ),
     );}
 
   @override

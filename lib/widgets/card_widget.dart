@@ -31,7 +31,7 @@ class CardWidget extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: CupertinoColors.systemGrey.withOpacity(0.5),
-                spreadRadius: 5,
+                spreadRadius: 4,
                 blurRadius: 7,
                 offset: Offset(0, 3), // changes position of shadow
               ),

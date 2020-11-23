@@ -1,13 +1,11 @@
 import 'package:attendo/modals/course_class.dart';
-import 'package:attendo/screens/attendence_screens/create_new.dart';
 import 'package:attendo/screens/courses_display/createNewClass_popup.dart';
 import 'package:attendo/screens/particular_course_pages/teacher_course_home_screen.dart';
 import 'package:attendo/widgets/card_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 final userRef = FirebaseFirestore.instance.collection('users');
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
@@ -34,43 +32,52 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
     //TODO: this is where we will toggle ZeroClass Screen
   }
 
+//   Future<bool> _onBackPressed() async{
+//     final result = Navigator.pop(context,true);
+//     return result;
+// }
+
   @override
   Widget build(BuildContext context) {
     return
-      CupertinoPageScaffold(
-        resizeToAvoidBottomInset: false,
-        child: NestedScrollView(
-            headerSliverBuilder: (context, bool innerBoxIsScrolled) {
-              return [
-                CupertinoSliverNavigationBar(
-                  largeTitle: Text('Courses'),
-                  trailing: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      'Create'
-                      // size: 20,
+      CupertinoApp(
+        theme: CupertinoThemeData(brightness: Brightness.light),
+        debugShowCheckedModeBanner: false,
+        home: CupertinoPageScaffold(
+          resizeToAvoidBottomInset: false,
+          child: NestedScrollView(
+              headerSliverBuilder: (context, bool innerBoxIsScrolled) {
+                return [
+                  CupertinoSliverNavigationBar(
+                    largeTitle: Text('Courses'),
+                    trailing: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        'Create'
+                        // size: 20,
+                      ),
+                      onPressed: () async {
+                        print('+ pressed');
+                        Navigator.push(context, CupertinoPageRoute(
+                            builder: (context)=>CreateNewClass(currentUser: widget.user,),fullscreenDialog: true));
+                        // await showCupertinoModalBottomSheet<Course>(
+                        //   context: context,
+                        //   builder: (context) => CreateNewClassPopUp(
+                        //     toggleScreenCallBack: toggleZeroCCScreen,
+                        //     currentUser: widget.user,
+                        //   ),
+                        // );
+                      },
                     ),
-                    onPressed: () async {
-                      print('+ pressed');
-                      Navigator.push(context, CupertinoPageRoute(
-                          builder: (context)=>CreateClass(currentUser: widget.user,),fullscreenDialog: true));
-                      // await showCupertinoModalBottomSheet<Course>(
-                      //   context: context,
-                      //   builder: (context) => CreateNewClassPopUp(
-                      //     toggleScreenCallBack: toggleZeroCCScreen,
-                      //     currentUser: widget.user,
-                      //   ),
-                      // );
-                    },
                   ),
-                ),
-              ];
-            },
-            body:buildCourseCards()),
-            ///TODO: ZeroClass Screen to be made
-          ///and it will be controlled here with a bool
-      // child:
-    );
+                ];
+              },
+              body:buildCourseCards()),
+              ///TODO: ZeroClass Screen to be made
+            ///and it will be controlled here with a bool
+        // child:
+    ),
+      );
   }
 
   deleteTheCourse(BuildContext context, Course course){

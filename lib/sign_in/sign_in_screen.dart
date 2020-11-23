@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 ///this Page is not used anywhere as of now,
 ///Working on new sign in functionality in this page
+// ignore: must_be_immutable
 class SignInPage extends StatelessWidget {
   final _firebaseAuth = FirebaseAuth.instance;
 
@@ -58,6 +60,7 @@ class SignInPage extends StatelessWidget {
           'userImageUrl': user.photoURL,
           'userDisplayName': user.displayName,
           'lastLogin' : DateTime.now(),
+          'rollNo': null,
         });
 
     print('qwerty:: ${user.email}');
@@ -71,29 +74,29 @@ class SignInPage extends StatelessWidget {
   CupertinoApp signInScreen() {
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
-    home: CupertinoPageScaffold(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Sign In'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
-              child: CupertinoButton.filled(
-                onPressed: (){
-                  _signInWithGoogle();
-                },
-                child: Center(
-                  child: Text('Sign in with Google'),
+      home: CupertinoPageScaffold(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Sign In'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+                child: CupertinoButton.filled(
+                  onPressed: (){
+                    _signInWithGoogle();
+                  },
+                  child: Center(
+                    child: Text('Sign in with Google'),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
 }

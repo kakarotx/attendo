@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:attendo/screens/other_screens/pdf_preview_screen.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:attendo/home_page.dart';
 import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/screens/attendence_screens/attendenceScreen.dart';
@@ -8,7 +11,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:share/share.dart';
 
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 ///when Teacher tab on CourseCard, that will take us here
 ///This page will contain details like::
@@ -20,9 +26,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
-final deletedCoursesRef = FirebaseFirestore.instance.collection('deletedCourses');
-
-
+final deletedCoursesRef =
+    FirebaseFirestore.instance.collection('deletedCourses');
 
 class CourseHomePageForTeacher extends StatefulWidget {
   CourseHomePageForTeacher({this.course, this.user});
@@ -42,6 +47,102 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     setState(() {
       currentSegment = newValue;
     });
+  }
+
+  final pdf = pw.Document();
+
+  //data for pdf
+  List<List<String>> listOfData = [
+    <String>[
+      'Student Name',
+      'Present Count',
+      'Absent Count',
+      'Present %'
+    ],
+  ];
+
+  qwerty()async{
+    print('starting........');
+
+  }
+
+
+
+
+  writeOnPdf() async {
+    ///
+    ///
+    final QuerySnapshot studentsData = await courseRef
+        .doc(widget.course.courseCode)
+        .collection('studentsEnrolled')
+        .get();
+
+    studentsData.docs.forEach((studentData) {
+      // print(doc.data());
+      List<String> oneStudentData = [];
+      final studentName = studentData.data()['studentName'];
+      print('student name');
+      print(studentName);
+      final int absent = studentData.data()['absent'];
+      print('absent count');
+      print(absent);
+      final int present = studentData.data()['present'];
+
+      print('add data to list');
+      oneStudentData.add(studentName);
+      oneStudentData.add(present.toString());
+      oneStudentData.add(absent.toString());
+
+      int presentPercentage;
+      try {
+        presentPercentage = (present * 100) ~/ (present + absent);
+      } catch (e) {
+        presentPercentage = 0;
+      }
+      oneStudentData.add('$presentPercentage%');
+
+      listOfData.add(oneStudentData);
+
+      },
+    );
+    print(listOfData);
+
+    ///
+    ///
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a5,
+        margin: pw.EdgeInsets.all(32),
+        build: (pw.Context context) {
+          return <pw.Widget>[
+            pw.Header(
+                level: 1,
+                text:
+                    'Attendence Sheet for Course: ${widget.course.courseName}'),
+            pw.Paragraph(text: 'Teacher: ${widget.course.teacherName}'),
+            pw.Table.fromTextArray(context: context, data: listOfData),
+            pw.Padding(padding: const pw.EdgeInsets.all(10)),
+          ];
+        },
+      ),
+    );
+  }
+
+  Future savePdf() async {
+    Directory documentDirectory = await getApplicationDocumentsDirectory();
+
+    String documentPath = documentDirectory.path;
+
+    File file = File("$documentPath/example.pdf");
+
+    file.writeAsBytesSync(pdf.save());
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    qwerty();
   }
 
   @override
@@ -165,7 +266,9 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
           child: Text('Take Attendence'),
           onPressed: () {
             Navigator.push(context, CupertinoPageRoute(builder: (context) {
-              return TakeAttendencePage();
+              return TakeAttendencePage(
+                course: widget.course,
+              );
             }));
           }),
     );
@@ -210,7 +313,6 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     );
   }
 
-
   ///when we click on 3dots ICONS at top right
   ///this sheet appears from bottom and has 3-4 options
   myActionSheet(BuildContext context) {
@@ -224,17 +326,46 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(
-                    builder: (context) => TakeAttendencePage(),
+                    builder: (context) => TakeAttendencePage(
+                      course: widget.course,
+                    ),
                   ),
                 );
               },
               child: Text('Take Attendence')),
           CupertinoActionSheetAction(
-              onPressed: () {
-                print('downLoading Sheet');
+              onPressed: () async {
+
+                await writeOnPdf();
+                await savePdf();
+
+                Directory documentDirectory =
+                    await getApplicationDocumentsDirectory();
+
+                String documentPath = documentDirectory.path;
+
+                String fullPath = "$documentPath/example.pdf";
                 Navigator.pop(context);
+
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => PdfPreviewScreen(
+                              path: fullPath,
+                            )));
               },
+              // print('downLoading Sheet');
+              // showNoticeDialog();
+              // Navigator.pop(context);
+              // },
               child: Text('Download AttendenceSheet')),
+          CupertinoActionSheetAction(
+              onPressed: () {
+                print('sharing');
+                _shareClass(context);
+                // Navigator.pop(context);
+              },
+              child: Text('Share Class')),
           CupertinoActionSheetAction(
               onPressed: () {
                 Navigator.pop(context);
@@ -253,13 +384,20 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       ),
     );
   }
-  
-  
-  showDeleteDialogAlert(BuildContext context, Course course){
+
+  _shareClass(BuildContext context) {
+    final RenderBox box = context.findRenderObject();
+    final sharingText = 'This code is shared by ${widget.course.teacherName},'
+        'Join ${widget.course.courseName} course with code: ${widget.course.courseCode} on this app [playstoreUrl]';
+    Share.share(sharingText,
+        subject: 'download App from',
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+  }
+
+  showDeleteDialogAlert(BuildContext context, Course course) {
     confirmDeleteAlert(context, course);
   }
-  
-  
+
   ///this will show a Dailog after we press delete Course button
   ///which has 2 options, [cancel] and [delete]
   void confirmDeleteAlert(BuildContext context, Course course) {
@@ -279,10 +417,13 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                   textStyle: TextStyle(color: CupertinoColors.destructiveRed),
                   // isDefaultAction: true,
                   onPressed: () {
-                     Navigator.pop(context);
+                    Navigator.pop(context);
                     addCourseDataToDeletedCourseCollection(course);
                     deleteTheCourseFromCloud(course);
-                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context)=>HomePage()), (route) => false);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        CupertinoPageRoute(builder: (context) => HomePage()),
+                        (route) => false);
                   },
                   child: Text("Delete")),
             ],
@@ -293,18 +434,37 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
   ///we are the deleting the Course from [CoursesDetails] collection
   void deleteTheCourseFromCloud(Course course) {
     courseRef.doc(course.courseCode).delete();
-    userRef.doc(widget.user.uid).collection('createdCoursesByUser').doc(course.courseCode).delete();
+    userRef
+        .doc(widget.user.uid)
+        .collection('createdCoursesByUser')
+        .doc(course.courseCode)
+        .delete();
   }
 
   ///I made a Collection on firebase [DeletedCourses],
   ///because Student have to be notified that the class is deleted
   ///ON Student PAGE, I have implemented a logic which checks if
   ///the Document with the COURSE CODE exists on [DeletedCourses]
-  addCourseDataToDeletedCourseCollection(Course course){
-    deletedCoursesRef.doc(course.courseCode).set({
-      'courseName': course.courseName,
-      'teacherName': course.teacherName
-    });
+  addCourseDataToDeletedCourseCollection(Course course) {
+    deletedCoursesRef.doc(course.courseCode).set(
+        {'courseName': course.courseName, 'teacherName': course.teacherName});
   }
 
+  showNoticeDialog() {
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            // title: Text("Note"),
+            content: Text("This feature is Coming Soon."),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Okays")),
+            ],
+          );
+        });
+  }
 }

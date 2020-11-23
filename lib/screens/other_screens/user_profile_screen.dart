@@ -1,11 +1,9 @@
-
-import 'package:attendo/screens/other_screens/edit_profile_page.dart';
+import 'package:attendo/screens/other_screens/help_dart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:attendo/screens/other_screens/edit_profile_page.dart';
 
 final userRef = FirebaseFirestore.instance.collection('users');
 
@@ -25,19 +23,42 @@ class _UserProfileState extends State<UserProfile> {
     GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
   }
+  String rollNo;
+  String enteredRollNumber;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  updateData(){
+    userRef.doc(widget.user.uid).update({
+      'rollNo': enteredRollNumber,
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      // backgroundColor: CupertinoColors.systemGrey,
-      navigationBar: CupertinoNavigationBar(
-        middle:Text('Profile'),
-        trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: _signOut,
-            child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),)),
+    return CupertinoApp(
+      theme: CupertinoThemeData(
+
+        brightness: Brightness.light,
       ),
-      child: listOfOptions(),
+      debugShowCheckedModeBanner: false,
+      home: CupertinoPageScaffold(
+        resizeToAvoidBottomInset: false,
+        // backgroundColor: CupertinoColors.systemGrey,
+        navigationBar: CupertinoNavigationBar(
+          middle:Text('Profile'),
+          trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: _signOut,
+              child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),)),
+        ),
+        child: listOfOptions(),
+      ),
     );
   }
   var _lights=true;
@@ -46,39 +67,109 @@ class _UserProfileState extends State<UserProfile> {
     return(
         ListView(
           children: [
-            EditProfileCard(user: widget.user,),
-            Divider(height: 1.5,color: CupertinoColors.inactiveGray,),
+            StreamBuilder(
+              stream: userRef.doc(widget.user.uid).snapshots(),
+              builder: (context, snapshot){
+                if(!snapshot.hasData){
+                  return CupertinoActivityIndicator();
+                } else
+                  {
+                    final rollNo = snapshot.data['rollNo'];
+                    return EditProfileCard(user: widget.user,rollNo:rollNo,);
+                  }
+              },
+            ),
+            Divider(height: 1,color: CupertinoColors.inactiveGray,),
             GestureDetector(
               // padding: EdgeInsets.zero,
               child: CupertinoTile(
                 // addPadding: false,
-                title: 'Edit Profile',
+                title: 'Add RollNo. (if student)',
                 trailingWidget: Icon(CupertinoIcons.forward),
               ),
               onTap: (){
                 print('opening editing page');
-                Navigator.push(context, CupertinoPageRoute(builder: (context)=>EditProfilePage()));
+                setAttendenceDialog();
               },
             ),
+            Divider(height: 0.3,color: CupertinoColors.inactiveGray,),
             Divider(height: 1,color: CupertinoColors.inactiveGray,),
             CupertinoTile(
               addPadding: false,
-            title: 'Notification',
-            trailingWidget: CupertinoSwitch(
-              activeColor: CupertinoColors.activeBlue,
-              value: _lights,
-              onChanged: (bool value){
-                setState(() {
-                  _lights=value;
-                });
+              title: 'Dark Mode',
+              trailingWidget: CupertinoSwitch(
+                activeColor: CupertinoColors.activeBlue,
+                value: _lights,
+                onChanged: (bool value){
+                  setState(() {
+                    _lights=value;
+                  });
+                },
+              ),
+            ),
+            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            GestureDetector(
+              // padding: EdgeInsets.zero,
+              child: CupertinoTile(
+                // addPadding: false,
+                title: 'Help',
+                trailingWidget: Icon(CupertinoIcons.forward),
+              ),
+              onTap: (){
+                print('Help');
+                Navigator.push(context, CupertinoPageRoute(builder: (context)=>HelpPage(),),);
               },
             ),
-          )
+            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            GestureDetector(
+              // padding: EdgeInsets.zero,
+              child: CupertinoTile(
+                // addPadding: false,
+                title: 'About us',
+                trailingWidget: Icon(CupertinoIcons.forward),
+              ),
+              onTap: (){
+                print('Showing About us screen');
+                Navigator.push(context, CupertinoPageRoute(builder: (context)=>HelpPage(),
+                   ),);
+              },
+            ),
           ],
         )
     );
   }
 
+
+  setAttendenceDialog(){
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            // title: Text("Note"),
+            content: CupertinoTextField(
+                placeholder: 'Roll No/Enrollment No.',
+              onChanged: (value){
+                  enteredRollNumber=value;
+              },
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  onPressed: () {
+                    updateData();
+                    Navigator.pop(context);
+                  },
+                  child: Text("Set")),
+
+              CupertinoDialogAction(
+                  onPressed: () {
+                    updateData();
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel",style: TextStyle(color: CupertinoColors.destructiveRed),)),
+            ],
+          );
+        });
+  }
 
 }
 
@@ -89,9 +180,9 @@ class _UserProfileState extends State<UserProfile> {
 ///edit Profile Card
 class EditProfileCard extends StatelessWidget {
   EditProfileCard({
-    this.user
+    this.user,this.rollNo
   });
-
+  final String rollNo;
   final User user;
 
   @override
@@ -114,6 +205,13 @@ class EditProfileCard extends StatelessWidget {
           ),
           SizedBox(height: 2,),
           Text(user.email, style: TextStyle(fontSize: 12, color: CupertinoColors.black),),
+          SizedBox(
+            height: 2,
+          ),
+          Text(
+            'Roll No: $rollNo',
+            style: TextStyle(color: CupertinoColors.black,fontSize: 12),
+          ),
         ],
       ),
       decoration: BoxDecoration(

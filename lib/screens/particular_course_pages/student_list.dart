@@ -1,4 +1,6 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/screens/other_screens/createNewStudent_popup.dart';
+import 'package:attendo/screens/particular_course_pages/add_message_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +19,7 @@ class _StudentsListState extends State<StudentsList> {
     return StreamBuilder<QuerySnapshot>(
         stream: courseRef
             .doc(widget.course.courseCode)
-            .collection('studentsEnrolled')
+            .collection('studentsEnrolled').orderBy('studentName',descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -30,17 +32,30 @@ class _StudentsListState extends State<StudentsList> {
               final emailId = student['emailId'];
               print(emailId);
               final studentName = student['studentName'];
-              final photoUrl = student['studentPhotoUrl'];
+              final studentPhotoUrl = student['studentPhotoUrl'];
+              final studentId= student['studentId'];
+              final int absent = student['absent'];
+              final int present = student['present'];
+              int presentPercentage;
+              try{
+                presentPercentage=(present*100)~/(present+absent);
+              } catch(e){
+                presentPercentage=0;
+              }
 
               studentCards.add(StudentCard(
-                studentPhotoUrl: photoUrl,
+                studentPhotoUrl: studentPhotoUrl,
                 studentEmailId: emailId,
                 studentName: studentName,
+                studentId: studentId,
+                presentPercentage: presentPercentage,
+
               ));
               print(studentCards.length);
             }
             return ListView.builder(
-              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              // shrinkWrap: true,
               itemCount: studentCards.length,
               itemBuilder: (context, int) {
                 print('building');
@@ -57,17 +72,28 @@ class _StudentsListState extends State<StudentsList> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          margin: EdgeInsets.only(left: 12,right: 12, bottom: 10),
+          margin: EdgeInsets.only(left: 12, right: 12, bottom: 10),
           child: CupertinoButton.filled(
             // padding: EdgeInsets.zero,
             onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => CreateNewStudentPage(
+                    currentUser: user,
+                    course: widget.course,
+                  ),
+                  fullscreenDialog: true
+                ),
+              );
               print('Adding New Student');
             },
             child: Text('Add New Student'),
           ),
         ),
         Container(
-          child: buildStudentList(),
+          height: 550,
+          child: buildStudentList()
         ),
       ],
     );
@@ -75,11 +101,14 @@ class _StudentsListState extends State<StudentsList> {
 }
 
 class StudentCard extends StatelessWidget {
-  StudentCard({this.studentPhotoUrl, this.studentEmailId, this.studentName});
+  StudentCard({this.studentPhotoUrl, this.studentEmailId, this.studentName, this.studentId,this.presentPercentage});
   //TODO: add RollNo. of Student
   final String studentName;
   final String studentPhotoUrl;
   final String studentEmailId;
+  final String studentId;
+  final int presentPercentage;
+
   ///this will be passed through the constructor
   ///final int presentPercent;
   @override
@@ -93,15 +122,13 @@ class StudentCard extends StatelessWidget {
       fill,
       fill,
     ];
-    ///
-    final double fillPercent = 75;
-    // fills 56.23% for container from bottom
-    final List<double> stops = [0.0, fillPercent / 100, fillPercent / 100, 1.0];
+
+    final List<double> stops = [0.0, presentPercentage / 100, presentPercentage / 100, 1.0];
+
     ///
 
     return Container(
-      margin: EdgeInsets.only(left: 12, right: 12,bottom: 10
-      ),
+      margin: EdgeInsets.only(left: 12, right: 12, bottom: 10),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -129,14 +156,14 @@ class StudentCard extends StatelessWidget {
                   children: [
                     Text(
                       studentName,
-                      style: TextStyle(color: CupertinoColors.white),
+                      style: TextStyle(color: presentPercentage>=40?CupertinoColors.white:CupertinoColors.black),
                     ),
                     SizedBox(
                       height: 3,
                     ),
                     Text(
                       studentEmailId,
-                      style: TextStyle(color: CupertinoColors.white),
+                      style: TextStyle(color: presentPercentage>=40?CupertinoColors.white:CupertinoColors.black),
                     ),
                   ],
                 ),
@@ -144,12 +171,13 @@ class StudentCard extends StatelessWidget {
             ),
           ),
           Container(
-            child: Text('${fillPercent.toInt().toString()}%', style: TextStyle(fontSize: 20),),
+            child: Text(
+              '$presentPercentage%',
+              style: TextStyle(fontSize: 20),
+            ),
           )
         ],
       ),
     );
   }
 }
-
-

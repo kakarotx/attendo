@@ -4,15 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:azlistview/azlistview.dart';
-
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
 
 //TODO: later pass the user through constructor
 final User user = FirebaseAuth.instance.currentUser;
-
 
 class AddAssignmentScreen extends StatefulWidget {
   AddAssignmentScreen({this.course, @required this.canSendMessages});
@@ -31,7 +28,6 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   String teacherImageUrl;
   FlutterLocalNotificationsPlugin fltrNotification;
 
-
   @override
   void initState() {
     super.initState();
@@ -39,11 +35,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     var androidInitilize = new AndroidInitializationSettings('ic_launcher');
     var iOSinitilize = new IOSInitializationSettings();
     var initilizationsSettings =
-    new InitializationSettings(androidInitilize, iOSinitilize);
+        new InitializationSettings(androidInitilize, iOSinitilize);
     fltrNotification = new FlutterLocalNotificationsPlugin();
     fltrNotification.initialize(initilizationsSettings,
         onSelectNotification: notificationSelected);
   }
+
   Future notificationSelected(String payload) async {}
 
   Future _showNotifications({String sender, String message}) async {
@@ -52,13 +49,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
         importance: Importance.Max);
     var iOSDetails = new IOSNotificationDetails();
     var generalNotificationDetails =
-    new NotificationDetails(androidDetails, iOSDetails);
+        new NotificationDetails(androidDetails, iOSDetails);
 
     await fltrNotification.show(
         0, "$sender", "$message", generalNotificationDetails,
         payload: "Task");
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +70,19 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
                     textMessage = message;
                   },
                   suffix: CupertinoButton(
-                      onPressed: () {
-                        textEditingController.clear();
-                        print('uploading');
+                    onPressed: () {
+                      textEditingController.clear();
+                      print('uploading');
+                      if (textMessage != null) {
                         uploadDataToCloud(
                             course: widget.course, textMessage: textMessage);
-                      print('uploaded');
-                        },
-                      child: Text('Send')),
+                        print('uploaded');
+                      } else{
+                        print('QWERTY:: null message cant upload');
+                      }
+                    },
+                    child: Text('Send'),
+                  ),
                 ),
               )
             : Container(),
@@ -123,7 +124,8 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: courseRef
           .doc(course.courseCode)
-          .collection('messagesByTeacher').orderBy('sendTime', descending: true)
+          .collection('messagesByTeacher')
+          .orderBy('sendTime', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -149,7 +151,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             itemCount: messagesWidgets.length,
             itemBuilder: (context, int) {
               //for displaying OnScreen Notification
-              _showNotifications(sender: messagesWidgets.first.teacherName, message: messagesWidgets.first.textMessage);
+              _showNotifications(
+                  sender: messagesWidgets.first.teacherName,
+                  message: messagesWidgets.first.textMessage);
               return messagesWidgets[int];
             },
           );

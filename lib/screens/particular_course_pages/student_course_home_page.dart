@@ -1,11 +1,11 @@
 import 'package:attendo/home_page.dart';
 import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/screens/attendence_screens/attendence_record.dart';
-import 'package:attendo/screens/courses_display/joinedClassScreen.dart';
 import 'package:attendo/screens/particular_course_pages/add_message_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:share/share.dart';
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 final deletedCoursesRef = FirebaseFirestore.instance.collection('deletedCourses');
@@ -127,6 +127,16 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
     );
   }
 
+
+  _shareClass(BuildContext context){
+    final RenderBox box = context.findRenderObject();
+    final sharingText = 'This code is shared by ${widget.course.teacherName},'
+        'Join ${widget.course.courseName} course with code: ${widget.course.courseCode} on this app [playstoreUrl]';
+    Share.share(sharingText,subject: 'download App from',
+        sharePositionOrigin: box.localToGlobal(Offset.zero)&box.size);
+  }
+
+
   ///action sheet
   myActionSheet(BuildContext context) {
     return Container(
@@ -135,10 +145,17 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
         actions: [
           CupertinoActionSheetAction(
               onPressed: () {
+                print('sharing');
+                _shareClass(context);
+                // Navigator.pop(context);
+              },
+              child: Text('Share Class')),
+          CupertinoActionSheetAction(
+              onPressed: () {
                 Navigator.pop(context);
                 confirmDeleteAlert(context);
               },
-              child: Text('Leave Class'))
+              child: Text('Leave Class',style: TextStyle(color: CupertinoColors.destructiveRed))),
         ],
         cancelButton: CupertinoActionSheetAction(
             onPressed: () {
@@ -150,6 +167,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
   }
   deleteTheCourseFromCLoud(){
     userRef.doc(widget.user.uid).collection('joinedCoursesByUser').doc(widget.course.courseCode).delete();
+    courseRef.doc(widget.course.courseCode).collection('studentsEnrolled').doc(widget.user.uid).delete();
   }
 
   ///this will show a Dailog after we press delete Course button

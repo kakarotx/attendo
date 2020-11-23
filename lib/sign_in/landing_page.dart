@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 class LandingPage extends StatelessWidget {
 
 
-
   void initState() {
     auth.FirebaseAuth.instance.authStateChanges().listen((user) {
       print('user :${user?.uid}');

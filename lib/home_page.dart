@@ -1,4 +1,3 @@
-import 'dart:html';
 
 import 'package:attendo/screens/courses_display/createdClassScreen.dart';
 import 'package:attendo/screens/courses_display/joinedClassScreen.dart';
@@ -9,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 ///this is HomeScreen, which is shown after user logs in;
-
-
+///contained 3TABS at bottom
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -25,20 +23,13 @@ class _HomePageState extends State<HomePage>
   String userEmail;
   String userId;
 
+  ///these are KEYS which are assigned to every Tab,
+  ///the problem of navigation is solved by these KEYS
   final GlobalKey<NavigatorState> firstTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> secondTabNavKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> thirdTabNavKey = GlobalKey<NavigatorState>();
 
-
-
-  //variables for PageView
-  PageController pageController;
-  int pageIndex = 0;
-  onTab(int pageIndex) {
-    pageController.jumpToPage(pageIndex);
-  }
-
-
+  CupertinoTabController tabController;
   ///this isAuth controls the which screen to show
   bool isAuth = false;
   GoogleSignInAccount userAccount;
@@ -47,6 +38,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     // TODO: implement initState
     super.initState();
+    tabController = CupertinoTabController(initialIndex: 0);
   }
 
 
@@ -60,11 +52,11 @@ class _HomePageState extends State<HomePage>
   ///basically Welcome Home page
   CupertinoApp welcomePage(BuildContext context) {
 
-    // final ListOfKeys = [
-    //   firstTabNavKey,
-    //   secondTabNavKey,
-    //   thirdTabNavKey
-    // ];
+    final listOfKeys = [
+      firstTabNavKey,
+      secondTabNavKey,
+      thirdTabNavKey
+    ];
 
     List homeScreenList = [
       CreatedClassScreen(user: user,),
@@ -73,35 +65,44 @@ class _HomePageState extends State<HomePage>
       JoinedClassScreen(user: user,),
     ];
     return CupertinoApp(
-      theme: CupertinoThemeData(brightness: Brightness.light),
+      // theme: CupertinoThemeData(brightness: Brightness.light,),
+
       debugShowCheckedModeBanner: false,
-      home: CupertinoTabScaffold(
-            tabBar: CupertinoTabBar(
-              items: [
-                ///this is where we are setting aur bottom ICONS
-                BottomNavigationBarItem(
-                  label: 'AddClass',
-                    icon: Icon(CupertinoIcons.add_circled_solid)),
-                BottomNavigationBarItem(
-                  label: 'Profile',
-                    icon: Icon(CupertinoIcons.person_solid)),
-                // BottomNavigationBarItem(
-                //     label: 'Alerts',
-                //     icon: Icon(CupertinoIcons.bell_solid)),
-                BottomNavigationBarItem(
-                  label: 'Joined',
-                    icon: Icon(CupertinoIcons.xmark_circle_fill)),
-              ],
-              // currentIndex: pageIndex,
-            ),
-            tabBuilder: (context, index, ) {
-              return CupertinoTabView(
-                // navigatorKey: ListOfKeys[index],
-                builder: (context) {
-                  return homeScreenList[index];
-                },
-              );
-            },
+      home: WillPopScope(
+        onWillPop: () async {
+          return !await listOfKeys[tabController.index].currentState.maybePop();
+        },
+        child: CupertinoTabScaffold(
+          controller: tabController,
+              tabBar: CupertinoTabBar(
+
+                items: [
+                  ///this is where we are setting aur bottom ICONS
+                  BottomNavigationBarItem(
+                    label: 'AddClass',
+                      icon: Icon(CupertinoIcons.add_circled_solid)),
+                  BottomNavigationBarItem(
+                    label: 'Profile',
+                      icon: Icon(CupertinoIcons.person_solid)),
+                  // BottomNavigationBarItem(
+                  //     label: 'Alerts',
+                  //     icon: Icon(CupertinoIcons.bell_solid)),
+                  BottomNavigationBarItem(
+                    label: 'Joined',
+                      icon: Icon(CupertinoIcons.xmark_circle_fill)),
+                ],
+                // currentIndex: pageIndex,
+              ),
+              tabBuilder: (context, index, ) {
+
+                return CupertinoTabView(
+                  navigatorKey: listOfKeys[index],
+                  builder: (context) {
+                    return homeScreenList[index];
+                  },
+                );
+              },
+        ),
       ),
     );}
 

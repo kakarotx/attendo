@@ -40,10 +40,7 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
   @override
   Widget build(BuildContext context) {
     return
-      CupertinoApp(
-        theme: CupertinoThemeData(brightness: Brightness.light),
-        debugShowCheckedModeBanner: false,
-        home: CupertinoPageScaffold(
+      CupertinoPageScaffold(
           resizeToAvoidBottomInset: false,
           child: NestedScrollView(
               headerSliverBuilder: (context, bool innerBoxIsScrolled) {
@@ -76,7 +73,7 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
               ///TODO: ZeroClass Screen to be made
             ///and it will be controlled here with a bool
         // child:
-    ),
+
       );
   }
 

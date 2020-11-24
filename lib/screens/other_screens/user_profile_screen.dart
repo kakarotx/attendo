@@ -41,13 +41,7 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: CupertinoThemeData(
-
-        brightness: Brightness.light,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
         resizeToAvoidBottomInset: false,
         // backgroundColor: CupertinoColors.systemGrey,
         navigationBar: CupertinoNavigationBar(
@@ -58,7 +52,7 @@ class _UserProfileState extends State<UserProfile> {
               child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),)),
         ),
         child: listOfOptions(),
-      ),
+
     );
   }
   var _lights=true;
@@ -134,6 +128,7 @@ class _UserProfileState extends State<UserProfile> {
                    ),);
               },
             ),
+            Divider(height: 1,color: CupertinoColors.inactiveGray,),
           ],
         )
     );
@@ -201,21 +196,21 @@ class EditProfileCard extends StatelessWidget {
           ),
           Text(
             user.displayName,
-            style: TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.black,fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.w500,fontSize: 18),
           ),
           SizedBox(height: 2,),
-          Text(user.email, style: TextStyle(fontSize: 12, color: CupertinoColors.black),),
+          Text(user.email, style: TextStyle(fontSize: 12,),),
           SizedBox(
             height: 2,
           ),
           Text(
             'Roll No: $rollNo',
-            style: TextStyle(color: CupertinoColors.black,fontSize: 12),
+            style: TextStyle(fontSize: 12),
           ),
         ],
       ),
       decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
+
       ),
     );
   }
@@ -242,13 +237,13 @@ class CupertinoTile extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-                color: CupertinoColors.black,),
+                ),
           ),
           trailingWidget
         ],
       ),
       decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
+        // color: CupertinoColors.lightBackgroundGray,
       ),
     );
   }

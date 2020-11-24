@@ -117,10 +117,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: CupertinoThemeData(brightness: Brightness.light),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
         resizeToAvoidBottomInset: false,
           navigationBar: CupertinoNavigationBar(
             leading: CupertinoButton(
@@ -271,7 +268,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
                 )
               ],
             ),
-          )),
+          )
     );
   }
 

@@ -96,10 +96,7 @@ class _JoinNewState extends State<JoinNew> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: CupertinoThemeData(brightness: Brightness.light),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
@@ -160,7 +157,7 @@ class _JoinNewState extends State<JoinNew> {
             ],
           ),
         ),
-      ),
+
     );
   }
 

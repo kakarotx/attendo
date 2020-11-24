@@ -27,10 +27,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: CupertinoThemeData(brightness: Brightness.light),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
         resizeToAvoidBottomInset: false,
         child: NestedScrollView(
           headerSliverBuilder: (context, bool innerBoxIsScrolled) {
@@ -56,7 +53,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
           body: buildListOfJoinedClass(),
         ),
         // child:
-      ),
+
     );
   }
 

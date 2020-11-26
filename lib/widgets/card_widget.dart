@@ -28,14 +28,14 @@ class CardWidget extends StatelessWidget {
               ),
             ),
             borderRadius: BorderRadius.circular(cardBorderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.systemGrey.withOpacity(0.5),
-                spreadRadius: 4,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color.withAlpha(20),
+            //     spreadRadius: 4,
+            //     blurRadius: 7,
+            //     offset: Offset(0, 3), // changes position of shadow
+            //   ),
+            // ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

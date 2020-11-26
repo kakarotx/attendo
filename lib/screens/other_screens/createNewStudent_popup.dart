@@ -67,19 +67,9 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: CupertinoThemeData(brightness: Brightness.light),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
+    return CupertinoPageScaffold(
         resizeToAvoidBottomInset: false,
           navigationBar: CupertinoNavigationBar(
-            leading: CupertinoButton(
-              onPressed: (){
-                Navigator.pop(context);
-              },
-              padding: EdgeInsets.zero,
-              child: Text('< Back')
-            ),
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               child: Text('Add'),
@@ -161,7 +151,7 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                 )
               ],
             ),
-          )),
+          )
     );
   }
 

@@ -32,21 +32,14 @@ class _CreateNewClassState extends State<CreateNewClass> {
   ///list of ImagePaths which are used for creating new CardWidgets
   List<String> imagePaths = [
     'assets/images/artWork/art01.jpg',
-    'assets/images/artWork/art02.jpg',
     'assets/images/artWork/art03.jpg',
+    'assets/images/artWork/art02.jpg',
   ];
 
   //TODO: generateNonRepeatativeRandomNumber
 
   String getRandomImg(List<String> imageList, int randomInt) {
     return imageList[randomInt];
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // fToast = FToast();
-    // fToast.init(context);
   }
 
   _showToast({String toastMsg, IconData toastIcon}) {
@@ -120,13 +113,6 @@ class _CreateNewClassState extends State<CreateNewClass> {
     return CupertinoPageScaffold(
         resizeToAvoidBottomInset: false,
           navigationBar: CupertinoNavigationBar(
-            leading: CupertinoButton(
-              onPressed: (){
-                Navigator.pop(context);
-              },
-              padding: EdgeInsets.zero,
-              child: Text('< Back')
-            ),
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               child: Text('Create'),
@@ -175,7 +161,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
                       codeOfCourse: courseCode,
                       nameOfCourse: courseName,
                       year: yearOfBatch,
-                      imagePath: imagePaths[randomInt]);
+                      imagePath: getRandomImg(imagePaths, randomInt));
                 } else{
                   showNoticeDialog();
                 }
@@ -222,12 +208,12 @@ class _CreateNewClassState extends State<CreateNewClass> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      'Batch  :    ',
+                      'Batch/Class  :    ',
                     ),
                     Expanded(
                       child: CupertinoTextField(
                         placeholder: 'Enter Batch Year or Class',
-                          keyboardType: TextInputType.number,
+                          // keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           onChanged: (String newValue) {
                             return yearOfBatch = (newValue);
@@ -274,10 +260,10 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
   ///TODO: later make a general class and transfer all these little functions to that class
   showNoticeDialog(){
-    showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
+
+    Navigator.of(context).push(
+      PageRouteBuilder(
+          pageBuilder: (context, _, __) =>  CupertinoAlertDialog(
             // title: Text("Note"),
             content: Text("Please fill out CourseName as well as Batch before creating new class."),
             actions: <Widget>[
@@ -287,8 +273,12 @@ class _CreateNewClassState extends State<CreateNewClass> {
                   },
                   child: Text("Okays")),
             ],
-          );
-        });
+          ),
+          opaque: false),
+    );
+
+
+
   }
 }
 

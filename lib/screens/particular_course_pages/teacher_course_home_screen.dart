@@ -8,7 +8,6 @@ import 'package:attendo/screens/particular_course_pages/add_message_screen.dart'
 import 'package:attendo/screens/particular_course_pages/student_list.dart';
 import 'package:attendo/widgets/card_widget.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share/share.dart';
@@ -60,13 +59,6 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       'Present %'
     ],
   ];
-
-  qwerty()async{
-    print('starting........');
-
-  }
-
-
 
 
   writeOnPdf() async {
@@ -127,22 +119,40 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       ),
     );
   }
+  final List<String> monthsList = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'June',
+    'July',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
 
   Future savePdf() async {
-    Directory documentDirectory = await getApplicationDocumentsDirectory();
+    // Directory documentDirectory = await getApplicationDocumentsDirectory();
+    //
+    // String documentPath = documentDirectory.path;
+    // print('QWERTY::: $documentPath');
+    // File file = File("$documentPath/example.pdf");
+    //
+    // await file.writeAsBytesSync(pdf.save());
+    ///
+    ///
+    final dir = await getExternalStorageDirectory();
+    print("Directoryyyyyyyyy:${dir.path}");
+    final String path = "${dir.path}/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
+    //
+    // String path = '/storage/emulated/0/Download/'; //this is custom address
+    final file = File(path);
 
-    String documentPath = documentDirectory.path;
+    await file.writeAsBytes(pdf.save());
 
-    File file = File("$documentPath/example.pdf");
-
-    file.writeAsBytesSync(pdf.save());
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    qwerty();
   }
 
   @override
@@ -176,14 +186,9 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.course.courseName.toUpperCase()),
         trailing: CupertinoButton(
-            padding: EdgeInsets.only(bottom: 4),
+            padding: EdgeInsets.zero,
             onPressed: () {
-              showCupertinoModalPopup(
-                context: context,
-                builder: (context) {
-                  return myActionSheet(context);
-                },
-              );
+                  myActionSheet(context);
             },
             child: Icon(CupertinoIcons.ellipsis)),
       ),
@@ -239,15 +244,18 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               takeAttendenceButton(),
-              CardWidget(
-                onCardTab: null,
-                newCourse: Course(
-                  teacherImageUrl: teacherImageUrl,
-                  courseCode: courseCode,
-                  imagePath: imagePath,
-                  yearOfBatch: yearOfBatch,
-                  courseName: courseName,
-                  teacherName: teacherName,
+              Hero(
+                tag: courseCode,
+                child: CardWidget(
+                  onCardTab: null,
+                  newCourse: Course(
+                    teacherImageUrl: teacherImageUrl,
+                    courseCode: courseCode,
+                    imagePath: imagePath,
+                    yearOfBatch: yearOfBatch,
+                    courseName: courseName,
+                    teacherName: teacherName,
+                  ),
                 ),
               ),
               classRecordContainer(),
@@ -278,110 +286,135 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
   ///Remove teacherName from CardWidget and Add 2 things
   ///1.TOTOAL CLASS TAKEN  2.TOTAL STUDENTS
   Widget classRecordContainer() {
-    return Container(
-      padding: EdgeInsets.only(top: 15, left: 15, bottom: 15),
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          padding: EdgeInsets.all(30),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: CupertinoColors.activeBlue,
+            borderRadius: BorderRadius.circular(6),
           ),
-        ],
-        color: CupertinoColors.activeBlue,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            'Total Class taken: 10',
-            style: TextStyle(color: CupertinoColors.white),
+          child: Column(
+            children: [
+              Text(
+                'Classes taken',
+                style: TextStyle(color: CupertinoColors.white, fontSize: 16),
+              ),
+              Text(
+                '18',
+                style: TextStyle(color: CupertinoColors.white, fontSize: 42),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 5,
+        ),
+        Container(
+          padding: EdgeInsets.all(30),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: CupertinoColors.activeBlue,
+            borderRadius: BorderRadius.circular(6),
           ),
-          Text(
-            'Total Students: 16',
-            style: TextStyle(color: CupertinoColors.white),
-          )
-        ],
-      ),
+          child: Column(
+            children: [
+              Text(
+                'Total Students',
+                style: TextStyle(color: CupertinoColors.white, fontSize: 16),
+              ),
+              StreamBuilder<QuerySnapshot>(
+                stream: courseRef.doc(widget.course.courseCode).collection('studentsEnrolled').snapshots(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData){
+                    return CupertinoActivityIndicator();
+                  }
+                  final noOfStudents = snapshot.data.docs.length;
+                  return Text(
+                    noOfStudents.toString(),
+                    style: TextStyle(color: CupertinoColors.white, fontSize: 42),
+                  );
+                }
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   ///when we click on 3dots ICONS at top right
   ///this sheet appears from bottom and has 3-4 options
   myActionSheet(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 14),
-      child: CupertinoActionSheet(
-        actions: [
-          CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => TakeAttendencePage(
-                      course: widget.course,
-                    ),
-                  ),
-                );
-              },
-              child: Text('Take Attendence')),
-          CupertinoActionSheetAction(
-              onPressed: () async {
-
-                await writeOnPdf();
-                await savePdf();
-
-                Directory documentDirectory =
-                    await getApplicationDocumentsDirectory();
-
-                String documentPath = documentDirectory.path;
-
-                String fullPath = "$documentPath/example.pdf";
-                Navigator.pop(context);
-
-                Navigator.push(
+    return showCupertinoModalPopup(
+      context: context,
+      builder:(context)=> Container(
+        margin: EdgeInsets.symmetric(horizontal: 14),
+        child: CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
                     context,
                     CupertinoPageRoute(
-                        builder: (context) => PdfPreviewScreen(
-                              path: fullPath,
-                            )));
-              },
-              // print('downLoading Sheet');
-              // showNoticeDialog();
-              // Navigator.pop(context);
-              // },
-              child: Text('Download AttendenceSheet')),
-          CupertinoActionSheetAction(
-              onPressed: () {
-                print('sharing');
-                _shareClass(context);
+                      builder: (context) => TakeAttendencePage(
+                        course: widget.course,
+                      ),
+                    ),
+                  );
+                },
+                child: Text('Take Attendence')),
+            CupertinoActionSheetAction(
+                onPressed: () async {
+
+                  await writeOnPdf();
+                  await savePdf();
+
+                  Directory documentDirectory =
+                  await getExternalStorageDirectory();
+
+                  String documentPath = documentDirectory.path;
+                  // String documentPath = '/storage/emulated/0/Download/';
+                  String fullPath = "$documentPath/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
+                  print(fullPath);
+                  Navigator.pop(context);
+
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => PdfPreviewScreen(
+                            path: fullPath,
+                          )));
+                },
+                // print('downLoading Sheet');
+                // showNoticeDialog();
                 // Navigator.pop(context);
-              },
-              child: Text('Share Class')),
-          CupertinoActionSheetAction(
+                // },
+                child: Text('Download AttendenceSheet')),
+            CupertinoActionSheetAction(
+                onPressed: () {
+                  print('sharing');
+                  _shareClass(context);
+                  // Navigator.pop(context);
+                },
+                child: Text('Share Class')),
+            CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  showDeleteDialogAlert(context, widget.course);
+                },
+                child: Text(
+                  'Delete Class',
+                  style: TextStyle(color: CupertinoColors.destructiveRed),
+                )),
+          ],
+          cancelButton: CupertinoActionSheetAction(
               onPressed: () {
                 Navigator.pop(context);
-                showDeleteDialogAlert(context, widget.course);
               },
-              child: Text(
-                'Delete Class',
-                style: TextStyle(color: CupertinoColors.destructiveRed),
-              )),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Cancel')),
-      ),
+              child: Text('Cancel')),
+        ),
+      )
     );
   }
 

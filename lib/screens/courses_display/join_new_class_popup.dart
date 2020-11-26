@@ -7,9 +7,8 @@ final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 ///to join already created classes by others
 class JoinNew extends StatefulWidget {
 
-  JoinNew({this.user,this.toggleScreenCallBack});
+  JoinNew({this.user});
 
-  final Function toggleScreenCallBack;
   final User user;
 
   @override
@@ -17,6 +16,7 @@ class JoinNew extends StatefulWidget {
 }
 
 class _JoinNewState extends State<JoinNew> {
+
   String enteredClassCode;
   CollectionReference courseRef;
   String courseName;
@@ -98,13 +98,6 @@ class _JoinNewState extends State<JoinNew> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          leading: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: Text('<Back'),
-            onPressed: (){
-              Navigator.pop(context);
-            },
-          ),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
             child: Text('Join'),
@@ -163,29 +156,31 @@ class _JoinNewState extends State<JoinNew> {
 
   _onJoinButtonPressed() async {
     if(enteredClassCode!=null){
+      final courseDocs =await courseRef.doc(enteredClassCode).get();
+      if(!courseDocs.exists){
+        showNoticeDialog();
+      } else{
+        ///getting the data of the particular course through ENTERED CODE
+        await getCourseDataFor(enteredClassCode: enteredClassCode);
 
-      ///getting the data of the particular course through ENTERED CODE
-      await getCourseDataFor(enteredClassCode: enteredClassCode);
+        ///uploading the same data to Cloud
+        uploadJoinedClassDataToCloud(
+            courseName: courseName,
+            courseCode: courseCode,
+            yearOfBatch: yearOfBatch,
+            imagePath: imagePath
+        );
 
-      ///uploading the same data to Cloud
-      uploadJoinedClassDataToCloud(
-          courseName: courseName,
-          courseCode: courseCode,
-          yearOfBatch: yearOfBatch,
-          imagePath: imagePath
-      );
+        ///adding Student to the Particular Course
+        addStudentToTheCloud(courseCode: courseCode);
+        print('joining new course');
 
-      ///adding Student to the Particular Course
-      addStudentToTheCloud(courseCode: courseCode);
-      print('joining new course');
+        ///the provider part that was here is commented below, OUTSIDE THE CLASS
 
-      ///the provider part that was here is commented below, OUTSIDE THE CLASS
+        ///now we are using Data on Cloud
 
-      ///now we are using Data on Cloud
-
-      widget.toggleScreenCallBack();
-      Navigator.pop(context);
-
+        Navigator.pop(context);
+      }
     }
     else{
 
@@ -196,11 +191,10 @@ class _JoinNewState extends State<JoinNew> {
   }
 
   showNoticeDialog(){
-    showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            // title: Text("Note"),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+          pageBuilder: (context, _, __) => CupertinoAlertDialog(
+            title: Text("Note"),
             content: Text("Enter Valid Course Code."),
             actions: <Widget>[
               CupertinoDialogAction(
@@ -209,7 +203,10 @@ class _JoinNewState extends State<JoinNew> {
                   },
                   child: Text("Okays")),
             ],
-          );
-        });
+          ),
+          opaque: false),
+    );
+
+
   }
 }

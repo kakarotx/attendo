@@ -15,6 +15,7 @@ class StudentsList extends StatefulWidget {
 }
 
 class _StudentsListState extends State<StudentsList> {
+
   buildStudentList() {
     return StreamBuilder<QuerySnapshot>(
         stream: courseRef
@@ -64,7 +65,10 @@ class _StudentsListState extends State<StudentsList> {
             );
           }
         });
+
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +119,7 @@ class StudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ///variables for Progress Bar
     final Color background = CupertinoColors.activeBlue;
-    final Color fill = CupertinoColors.extraLightBackgroundGray;
+    final Color fill = CupertinoTheme.of(context).barBackgroundColor;
     final List<Color> gradient = [
       background,
       background,
@@ -156,14 +160,14 @@ class StudentCard extends StatelessWidget {
                   children: [
                     Text(
                       studentName,
-                      style: TextStyle(color: presentPercentage>=40?CupertinoColors.white:CupertinoColors.black),
+                      style: TextStyle(color: presentPercentage>=40?CupertinoTheme.of(context).primaryContrastingColor:CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
                     ),
                     SizedBox(
                       height: 3,
                     ),
                     Text(
                       studentEmailId,
-                      style: TextStyle(color: presentPercentage>=40?CupertinoColors.white:CupertinoColors.black),
+                      style: TextStyle(color: presentPercentage>=40?CupertinoTheme.of(context).primaryContrastingColor:CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
                     ),
                   ],
                 ),

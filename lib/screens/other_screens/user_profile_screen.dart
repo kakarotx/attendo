@@ -1,16 +1,18 @@
 import 'package:attendo/screens/other_screens/help_dart.dart';
+import 'package:attendo/screens/particular_course_pages/set_roll_no.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 final userRef = FirebaseFirestore.instance.collection('users');
 
 class UserProfile extends StatefulWidget {
-  UserProfile({this.user});
+  UserProfile({this.user, this.toggleTheme});
 
   final User user;
+  final Function toggleTheme;
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -25,12 +27,6 @@ class _UserProfileState extends State<UserProfile> {
   }
   String rollNo;
   String enteredRollNumber;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   updateData(){
     userRef.doc(widget.user.uid).update({
@@ -52,10 +48,9 @@ class _UserProfileState extends State<UserProfile> {
               child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),)),
         ),
         child: listOfOptions(),
-
     );
   }
-  var _lights=true;
+
   ///here we are displaying List of all different options under setting
   listOfOptions(){
     return(
@@ -83,22 +78,20 @@ class _UserProfileState extends State<UserProfile> {
               ),
               onTap: (){
                 print('opening editing page');
-                setAttendenceDialog();
+                Navigator.push(context, CupertinoPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context)=>SetRollNoPage(user: widget.user,)
+                ));
+                // setAttendenceDialog();
               },
             ),
             Divider(height: 0.3,color: CupertinoColors.inactiveGray,),
             Divider(height: 1,color: CupertinoColors.inactiveGray,),
-            CupertinoTile(
-              addPadding: false,
-              title: 'Dark Mode',
-              trailingWidget: CupertinoSwitch(
-                activeColor: CupertinoColors.activeBlue,
-                value: _lights,
-                onChanged: (bool value){
-                  setState(() {
-                    _lights=value;
-                  });
-                },
+            GestureDetector(
+              onTap: widget.toggleTheme,
+              child: CupertinoTile(
+                title: 'Switch Theme',
+                trailingWidget: Icon(CupertinoIcons.forward),
               ),
             ),
             Divider(height: 1,color: CupertinoColors.inactiveGray,),
@@ -136,15 +129,14 @@ class _UserProfileState extends State<UserProfile> {
 
 
   setAttendenceDialog(){
-    showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
+    Navigator.of(context).push(
+      PageRouteBuilder(
+          pageBuilder: (context, _, __) => CupertinoAlertDialog(
             // title: Text("Note"),
             content: CupertinoTextField(
-                placeholder: 'Roll No/Enrollment No.',
+              placeholder: 'Roll No/Enrollment No.',
               onChanged: (value){
-                  enteredRollNumber=value;
+                enteredRollNumber=value;
               },
             ),
             actions: <Widget>[
@@ -162,8 +154,10 @@ class _UserProfileState extends State<UserProfile> {
                   },
                   child: Text("Cancel",style: TextStyle(color: CupertinoColors.destructiveRed),)),
             ],
-          );
-        });
+          ),
+          opaque: false),
+    );
+
   }
 
 }
@@ -203,7 +197,7 @@ class EditProfileCard extends StatelessWidget {
           SizedBox(
             height: 2,
           ),
-          Text(
+          rollNo==null?Container():Text(
             'Roll No: $rollNo',
             style: TextStyle(fontSize: 12),
           ),

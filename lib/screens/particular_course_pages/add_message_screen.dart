@@ -135,14 +135,22 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           List<MessageCard> messagesWidgets = [];
           for (var message in messages) {
             final messageData = message.data();
+            final idOfMsgDoc = message.id;
             final textMessage = messageData['textMessage'];
             final teacherImageUrl = messageData['teacherImageUrl'];
             final teacherName = messageData['teacherName'];
+            //building a function to delete this message
+             void deleteMessage() {
+               courseRef
+                   .doc(course.courseCode)
+                   .collection('messagesByTeacher').doc(idOfMsgDoc).delete();
+            }
             messagesWidgets.add(
               MessageCard(
                 textMessage: textMessage,
                 teacherName: teacherName,
                 teacherImageUrl: teacherImageUrl,
+                deleteMsg: deleteMessage,
               ),
             );
           }
@@ -164,11 +172,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
 }
 
 class MessageCard extends StatelessWidget {
-  MessageCard({this.textMessage, this.teacherName, this.teacherImageUrl});
+  MessageCard({this.textMessage, this.teacherName, this.teacherImageUrl, this.deleteMsg});
 
   final String teacherName;
   final String teacherImageUrl;
   final String textMessage;
+  final Function deleteMsg;
 
   final List<String> monthsList = [
     'Jan',
@@ -192,25 +201,34 @@ class MessageCard extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        color: CupertinoColors.extraLightBackgroundGray,
+        color: CupertinoTheme.of(context).barBackgroundColor,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(teacherImageUrl),
-              ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Text(teacherName),
-                  Text(
-                      '${DateTime.now().day} ${monthsList[DateTime.now().month]}'),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(teacherImageUrl),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(teacherName),
+                      Text(
+                          '${DateTime.now().day} ${monthsList[DateTime.now().month]}'),
+                    ],
+                  )
                 ],
+              ),
+              CupertinoButton(
+                onPressed: deleteMsg,
+                // child: Text('Delete', style: TextStyle(color: CupertinoTheme.of(context).primaryColor, fontSize: 14),),
+                child: Icon(CupertinoIcons.delete, color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color,),
               )
             ],
           ),
@@ -218,7 +236,6 @@ class MessageCard extends StatelessWidget {
           Container(
             child: Text(
               textMessage,
-              style: TextStyle(color: CupertinoColors.black),
             ),
           ),
         ],

@@ -17,13 +17,9 @@ class JoinedClassScreen extends StatefulWidget {
 }
 
 class _JoinedClassScreenState extends State<JoinedClassScreen> {
+
   List<Text> coursesList = [];
   Course joinedCourse;
-
-  bool zeroJC = true;
-
-  ///this function will toggle the ZeroCC screen
-  void toggleZeroCCScreen() {}
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +36,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (context) => JoinNew(user: widget.user,toggleScreenCallBack: toggleZeroCCScreen,),
+                        builder: (context) => JoinNew(user: widget.user),
                         fullscreenDialog: true
                       ),
                     );
@@ -71,42 +67,49 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
         if (!snapshot.hasData) {
           return CupertinoActivityIndicator();
         } else {
+
           final courses = snapshot.data.docs;
           List<CardWidget> cardWidgets = [];
-          for (var course in courses) {
-            final courseData = course.data();
-            final courseName = courseData['courseName'];
-            final courseCode = courseData['courseCode'];
-            final yearOfBatch = courseData['yearOfBatch'];
-            final imagePath = courseData['imagePath'];
-            final teacherName = courseData['createdBy'];
-            final teacherImageUrl = courseData['teacherImageUrl'];
-            cardWidgets.add(
-              CardWidget(
-                newCourse: Course(
-                    teacherImageUrl: teacherImageUrl,
-                    teacherName: teacherName,
-                    courseName: courseName,
-                    courseCode: courseCode,
-                    imagePath: imagePath,
-                    yearOfBatch: yearOfBatch.toString()),
-                onCardTab: () {
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) {
-                    return CourseHomePageForStudent(
-                      user: widget.user,
-                      course: Course(
-                          teacherImageUrl: teacherImageUrl,
-                          teacherName: teacherName,
-                          courseName: courseName,
-                          courseCode: courseCode,
-                          imagePath: imagePath,
-                          yearOfBatch: yearOfBatch.toString()),
-                    );
-                  }));
-                },
-              ),
+          if(courses.isEmpty){
+            return  Container(
+              child: Image.asset('assets/images/joinNewClass.png',),
             );
+          } else{
+            for (var course in courses) {
+              final courseData = course.data();
+              final courseName = courseData['courseName'];
+              final courseCode = courseData['courseCode'];
+              final yearOfBatch = courseData['yearOfBatch'];
+              final imagePath = courseData['imagePath'];
+              final teacherName = courseData['createdBy'];
+              final teacherImageUrl = courseData['teacherImageUrl'];
+              cardWidgets.add(
+                CardWidget(
+                  newCourse: Course(
+                      teacherImageUrl: teacherImageUrl,
+                      teacherName: teacherName,
+                      courseName: courseName,
+                      courseCode: courseCode,
+                      imagePath: imagePath,
+                      yearOfBatch: yearOfBatch.toString()),
+                  onCardTab: () {
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (context) {
+                          return CourseHomePageForStudent(
+                            user: widget.user,
+                            course: Course(
+                                teacherImageUrl: teacherImageUrl,
+                                teacherName: teacherName,
+                                courseName: courseName,
+                                courseCode: courseCode,
+                                imagePath: imagePath,
+                                yearOfBatch: yearOfBatch.toString()),
+                          );
+                        }));
+                  },
+                ),
+              );
+            }
           }
           return ListView.builder(
               itemCount: cardWidgets.length,

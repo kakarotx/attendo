@@ -1,4 +1,3 @@
-
 import 'package:attendo/screens/courses_display/createdClassScreen.dart';
 import 'package:attendo/screens/courses_display/joinedClassScreen.dart';
 import 'package:attendo/screens/other_screens/user_profile_screen.dart';
@@ -10,6 +9,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 ///this is HomeScreen, which is shown after user logs in;
 ///contained 3TABS at bottom
 class HomePage extends StatefulWidget {
+  HomePage({this.toggleTheme});
+
+  final Function toggleTheme;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -30,6 +32,7 @@ class _HomePageState extends State<HomePage>
   final GlobalKey<NavigatorState> thirdTabNavKey = GlobalKey<NavigatorState>();
 
   CupertinoTabController tabController;
+
   ///this isAuth controls the which screen to show
   bool isAuth = false;
   GoogleSignInAccount userAccount;
@@ -41,7 +44,6 @@ class _HomePageState extends State<HomePage>
     tabController = CupertinoTabController(initialIndex: 0);
   }
 
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -50,61 +52,56 @@ class _HomePageState extends State<HomePage>
 
   ///welcome Page will be shown after user sign in with google
   ///basically Welcome Home page
-  CupertinoApp welcomePage(BuildContext context) {
-
-    final listOfKeys = [
-      firstTabNavKey,
-      secondTabNavKey,
-      thirdTabNavKey
-    ];
+  WillPopScope welcomePage(BuildContext context) {
+    final listOfKeys = [firstTabNavKey, secondTabNavKey, thirdTabNavKey];
 
     List homeScreenList = [
-      CreatedClassScreen(user: user,),
-      UserProfile(user: user,),
-      // NotificationPage(),
-      JoinedClassScreen(user: user,),
-    ];
-    return CupertinoApp(
-      // theme: CupertinoThemeData(brightness: Brightness.light,),
-
-      debugShowCheckedModeBanner: false,
-      home: WillPopScope(
-        onWillPop: () async {
-          return !await listOfKeys[tabController.index].currentState.maybePop();
-        },
-        child: CupertinoTabScaffold(
-          controller: tabController,
-              tabBar: CupertinoTabBar(
-
-                items: [
-                  ///this is where we are setting aur bottom ICONS
-                  BottomNavigationBarItem(
-                    label: 'AddClass',
-                      icon: Icon(CupertinoIcons.add_circled_solid)),
-                  BottomNavigationBarItem(
-                    label: 'Profile',
-                      icon: Icon(CupertinoIcons.person_solid)),
-                  // BottomNavigationBarItem(
-                  //     label: 'Alerts',
-                  //     icon: Icon(CupertinoIcons.bell_solid)),
-                  BottomNavigationBarItem(
-                    label: 'Joined',
-                      icon: Icon(CupertinoIcons.xmark_circle_fill)),
-                ],
-                // currentIndex: pageIndex,
-              ),
-              tabBuilder: (context, index, ) {
-
-                return CupertinoTabView(
-                  navigatorKey: listOfKeys[index],
-                  builder: (context) {
-                    return homeScreenList[index];
-                  },
-                );
-              },
-        ),
+      CreatedClassScreen(
+        user: user,
       ),
-    );}
+
+      // NotificationPage(),
+      JoinedClassScreen(
+        user: user,
+      ),
+      UserProfile(user: user, toggleTheme: widget.toggleTheme),
+    ];
+    return WillPopScope(
+      onWillPop: () async {
+        return !await listOfKeys[tabController.index].currentState.maybePop();
+      },
+      child: CupertinoTabScaffold(
+        controller: tabController,
+        tabBar: CupertinoTabBar(
+          items: [
+            ///this is where we are setting aur bottom ICONS
+            BottomNavigationBarItem(
+                label: 'AddClass',
+                icon: Icon(CupertinoIcons.add_circled_solid)),
+            // BottomNavigationBarItem(
+            //     label: 'Alerts',
+            //     icon: Icon(CupertinoIcons.bell_solid)),
+            BottomNavigationBarItem(
+                label: 'Joined', icon: Icon(CupertinoIcons.xmark_circle_fill)),
+            BottomNavigationBarItem(
+                label: 'Profile', icon: Icon(CupertinoIcons.person_solid)),
+          ],
+          // currentIndex: pageIndex,
+        ),
+        tabBuilder: (
+          context,
+          index,
+        ) {
+          return CupertinoTabView(
+            navigatorKey: listOfKeys[index],
+            builder: (context) {
+              return homeScreenList[index];
+            },
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

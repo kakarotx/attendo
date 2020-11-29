@@ -33,6 +33,7 @@ dev_dependencies:
   flutter_full_pdf_viewer: ^1.0.6
   shared_preferences: ^0.5.12+4
   printing: ^3.7.1
+  sleek_circular_slider: ^1.1.0
 
 
 
@@ -46,5 +47,18 @@ flutter:
     - assets/images/artWork/
     - assets/images/others/
 
+  fonts:
+    - family: inter
+      fonts:
+        - asset: fonts/Inter-Black-slnt=0.ttf
+        - asset: fonts/Inter-Bold-slnt=0.ttf
+        - asset: fonts/Inter-ExtraBold-slnt=0.ttf
+        - asset: fonts/Inter-ExtraLight-slnt=0.ttf
+        - asset: fonts/Inter-Light-slnt=0.ttf
+        - asset: fonts/Inter-Medium-slnt=0.ttf
+        - asset: fonts/Inter-Regular-slnt=0.ttf
+        - asset: fonts/Inter-SemiBold-slnt=0.ttf
+        - asset: fonts/Inter-Thin-slnt=0.ttf
+          style: italic
 
 

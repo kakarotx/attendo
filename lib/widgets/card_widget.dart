@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 
 const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 12);
-const double cardBorderRadius = 10;
+const double cardBorderRadius = 8;
 
 class CardWidget extends StatelessWidget {
   CardWidget({this.newCourse,this.onCardTab});

@@ -35,6 +35,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
     'assets/images/artWork/art03.jpg',
     'assets/images/artWork/art02.jpg',
   ];
+  int randomIntForImage;
 
   //TODO: generateNonRepeatativeRandomNumber
 
@@ -117,54 +118,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
               padding: EdgeInsets.zero,
               child: Text('Create'),
               onPressed: () {
-
-                print('creating new class...');
-
-                ///here many things are happening
-                ///1. gerating a random int to select a Image for card
-                ///and random code for the course.
-                ///2.Uploading data to firebase, after check if anything is not null
-                ///TODO: random number can generate repetative random numbers so we
-                ///have to make another function to takle that
-
-                //generate Random courseCode
-                int classCode = 9999 + Random().nextInt(99999 - 9999);
-                courseCode = classCode.toString();
-
-                //generated a random int which is passed through ImageList index
-                //TODO: make a function so that images don't ListOfCourseCard
-                //min + Random().nextInt(max-min);
-                //this is for card image selection
-                int randomInt = 0 + Random().nextInt(3 - 0);
-
-                if (yearOfBatch != null && courseName != null) {
-                  ///adding the courseCode to the ListOfCourseCodes
-                  ///later when we will join class, we will check in this list
-                  ///whether the enteredCode exists or not
-                  ///Later we will check enteredCode in database
-
-                  // widget.toggleScreenCallBack();
-                  _showToast(
-                      toastMsg: 'Class Created',
-                      toastIcon: CupertinoIcons.check_mark);
-
-                  Navigator.pop(context);
-
-                  ///toast msg when any field is left and create class is pressed
-                  _showToast(
-                      toastMsg: 'Enter Valid Details',
-                      toastIcon: CupertinoIcons.drop_triangle_fill);
-
-                  ///this part is uploading course details as a Document to fireStore
-                  ///whose ID is set as CourseCode.
-                  uploadCourseDataToCloud(
-                      codeOfCourse: courseCode,
-                      nameOfCourse: courseName,
-                      year: yearOfBatch,
-                      imagePath: getRandomImg(imagePaths, randomInt));
-                } else{
-                  showNoticeDialog();
-                }
+                _onCreateButtonPressed();
               },
             ),
           ),
@@ -276,10 +230,77 @@ class _CreateNewClassState extends State<CreateNewClass> {
           ),
           opaque: false),
     );
+  }
+
+  regenerateTheRandomCode(){
+    //generate Random courseCode
+    int classCode = 9999 + Random().nextInt(99999 - 9999);
+    courseCode = classCode.toString();
+
+    //generated a random int which is passed through ImageList index
+    //TODO: make a function so that images don't ListOfCourseCard
+    //min + Random().nextInt(max-min);
+    //this is for card image selection
+    randomIntForImage = 0 + Random().nextInt(3 - 0);
+  }
 
 
+  ///making _onCreateButtonPressed
+  _onCreateButtonPressed() async{
+    regenerateTheRandomCode();
+    //checkIfTheGeneratedCodeAlreadyExist();
+    final courseDoc = await coursesRef.doc(courseCode).get();
+
+    if (courseDoc.exists){
+      _onCreateButtonPressed();
+    }
+    else {
+      ///
+      ///
+      print('creating new class...');
+
+      ///here many things are happening
+      ///1. gerating a random int to select a Image for card
+      ///and random code for the course.
+      ///2.Uploading data to firebase, after check if anything is not null
+      ///TODO: random number can generate repetative random numbers so we
+      ///have to make another function to takle that
+
+      if (yearOfBatch != null && courseName != null) {
+        ///adding the courseCode to the ListOfCourseCodes
+        ///later when we will join class, we will check in this list
+        ///whether the enteredCode exists or not
+        ///Later we will check enteredCode in database
+
+        // widget.toggleScreenCallBack();
+        _showToast(
+            toastMsg: 'Class Created',
+            toastIcon: CupertinoIcons.check_mark);
+
+        Navigator.pop(context);
+
+        ///toast msg when any field is left and create class is pressed
+        _showToast(
+            toastMsg: 'Enter Valid Details',
+            toastIcon: CupertinoIcons.drop_triangle_fill);
+
+        ///this part is uploading course details as a Document to fireStore
+        ///whose ID is set as CourseCode.
+        uploadCourseDataToCloud(
+            codeOfCourse: courseCode,
+            nameOfCourse: courseName,
+            year: yearOfBatch,
+            imagePath: getRandomImg(imagePaths, randomIntForImage));
+      } else{
+        showNoticeDialog();
+      }
+    }
 
   }
+
+
+
+
 }
 
 ///DANGER AHEAD-

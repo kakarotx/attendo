@@ -1,3 +1,4 @@
+import 'package:attendo/screens/other_screens/developers.dart';
 import 'package:attendo/screens/other_screens/help_dart.dart';
 import 'package:attendo/screens/particular_course_pages/set_roll_no.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -117,7 +118,7 @@ class _UserProfileState extends State<UserProfile> {
               ),
               onTap: (){
                 print('Showing About us screen');
-                Navigator.push(context, CupertinoPageRoute(builder: (context)=>HelpPage(),
+                Navigator.push(context, CupertinoPageRoute(builder: (context)=>DevelopersPage(),
                    ),);
               },
             ),

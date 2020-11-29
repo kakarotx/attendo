@@ -118,7 +118,7 @@ class StudentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ///variables for Progress Bar
-    final Color background = CupertinoColors.activeBlue;
+    final Color background = CupertinoColors.systemBlue;
     final Color fill = CupertinoTheme.of(context).barBackgroundColor;
     final List<Color> gradient = [
       background,

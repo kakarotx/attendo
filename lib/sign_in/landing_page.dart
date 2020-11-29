@@ -3,6 +3,7 @@ import 'package:attendo/sign_in/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:attendo/main.dart';
 
 class LandingPage extends StatefulWidget {
 
@@ -12,27 +13,50 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
 
+
   void initState() {
     super.initState();
     auth.FirebaseAuth.instance.authStateChanges().listen((user) {
       print('user :${user?.uid}');
     });
+
   }
+  // getBoolValuesSF() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   //Return bool
+  //   bool boolValue = prefs.getBool('isThemeLight');
+  //   isThemeLight = boolValue;
+  //   print('isThemeLight saved as $boolValue locally');
+  // }
+
+  // addBoolToSF() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setBool('isThemeLight', isThemeLight);
+  // }
+
 
 
   @override
   Widget build(BuildContext context) {
-    return LandingPageBody();
+
+    // setThemeToNull();
+    return
+      LandingPageBody();
   }
 }
 
+// ignore: must_be_immutable
 class LandingPageBody extends StatefulWidget {
+  // LandingPageBody({this.isThemeLight});
+  // bool isThemeLight;
   @override
   _LandingPageBodyState createState() => _LandingPageBodyState();
 }
 
 class _LandingPageBodyState extends State<LandingPageBody> {
 
+  ///this is not used anywhere but this is how we set the dark and light theme
+  ///specifing the The MAIN COLORS USED in the app
   CupertinoThemeData lightThemeData = CupertinoThemeData(
     brightness: Brightness.light,
   );
@@ -44,22 +68,30 @@ class _LandingPageBodyState extends State<LandingPageBody> {
     // scaffoldBackgroundColor: CupertinoColors.systemGrey,
   );
 
-  bool isThemeLight=true;
+  bool isThemeLight;
 
-  addBoolToSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isThemeLight', isThemeLight);
+  ///when the user starts the app for the first time, the BOOL which decides the theme is null,
+  ///so we are checking if the User is null => set Theme to LightTheme: and save it to the SharedPreferences
+  setThemeToNull() async{
+    if(auth.FirebaseAuth.instance.currentUser==null && isThemeLight==null)
+    {
+      isThemeLight=true;
+    }
+    await addBoolToSF();
   }
 
+  ///gets the data from local storage
   getBoolValuesSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return bool
-    bool boolValue = prefs.getBool('isThemeLight');
-    if(boolValue != null){
-      isThemeLight = boolValue;
-    } else{
-      isThemeLight = true;
-    }
+    bool boolValue = sharedPref.getBool('isThemeLight');
+    isThemeLight = boolValue;
+    print('getting isThemeLight as $boolValue from local');
+  }
+
+  ///this function saves the bool [isThemeLight] on local storage
+  addBoolToSF() async {
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    sharedPref.setBool('isThemeLight', isThemeLight);
   }
 
   @override
@@ -69,24 +101,19 @@ class _LandingPageBodyState extends State<LandingPageBody> {
     getBoolValuesSF();
   }
 
-  CupertinoThemeData themeDecider(){
-    if(isThemeLight==null){
-      return null;
-    }
-    if(isThemeLight==true){
-      return CupertinoThemeData(brightness: Brightness.light);
-    } else{
-      return CupertinoThemeData(brightness: Brightness.dark);
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
+
+    getBoolValuesSF();
+    setThemeToNull();
+
     return CupertinoApp(
-      // theme: CupertinoThemeData(brightness: Brightness.light),
-      theme: isThemeLight?CupertinoThemeData(brightness: Brightness.light):CupertinoThemeData(brightness: Brightness.dark),
-      // theme: themeDecider(),
+      theme:
+      isThemeLight?
+      CupertinoThemeData(brightness: Brightness.light):
+      CupertinoThemeData(brightness: Brightness.dark),
+
       debugShowCheckedModeBanner: false,
 
       home: CupertinoPageScaffold(
@@ -101,19 +128,25 @@ class _LandingPageBodyState extends State<LandingPageBody> {
             builder: (context, snapshot) {
               ///this snapshot contains the Data from our Stream
               ///Stream can contain any data eg. [int, list, null]
+              ///
               if (snapshot.connectionState == ConnectionState.active) {
                 final user = snapshot.data;
                 if (user == null) {
                   print('qwerty ::${user?.uid}');
-                  return SignInPage();
+                  return SignInPage(
+                    isThemeLight: isThemeLight,
+                  );
                 } else{
                   print('qwerty ::${user?.uid}');
-                  return HomePage(toggleTheme: () {
+                  return
+                    HomePage(toggleTheme: () {
                     print('theme changed');
-                    addBoolToSF();
+
+                    print('theme saved to phone locally as ${!isThemeLight}');
                     setState(() {
                       isThemeLight = !isThemeLight;
                     });
+                    addBoolToSF();
                   },);
                 }
               } else{

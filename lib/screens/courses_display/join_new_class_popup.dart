@@ -27,20 +27,28 @@ class _JoinNewState extends State<JoinNew> {
   String teacherImageUrl;
 
   getCourseDataFor({String enteredClassCode}) async {
+
+    //checking if the class is created by same user so that he/she can't join their own class
+    final usersData = await userRef.doc(widget.user.uid).collection('createdCoursesByUser').doc(enteredClassCode).get();
+    final bool isClassCreatedByTheSameUser = !usersData.exists;
+
     final DocumentSnapshot courseData =
     await courseRef.doc(enteredClassCode).get();
-    if(courseData.exists){
-      try {
-        courseName = courseData.data()['courseName'];
-        courseCode = courseData.data()['courseCode'];
-        yearOfBatch = courseData.data()['yearOfBatch'];
-        imagePath = courseData.data()['imagePath'];
-        teacherName = courseData.data()['createdBy'];
-        teacherImageUrl = courseData.data()['teacherImageUrl'];
-        print('this is $courseName');
-      } catch (e) {
-        print('qwerty error::::$e');
+    if(isClassCreatedByTheSameUser){
+      if(courseData.exists){
+        try {
+          courseName = courseData.data()['courseName'];
+          courseCode = courseData.data()['courseCode'];
+          yearOfBatch = courseData.data()['yearOfBatch'];
+          imagePath = courseData.data()['imagePath'];
+          teacherName = courseData.data()['createdBy'];
+          teacherImageUrl = courseData.data()['teacherImageUrl'];
+          print('this is $courseName');
+        } catch (e) {
+          print('qwerty error::::$e');
+        }
       }
+    } else{
     }
 
   }
@@ -49,6 +57,7 @@ class _JoinNewState extends State<JoinNew> {
   uploadJoinedClassDataToCloud({String courseName,String courseCode,String imagePath,String yearOfBatch}) async{
     final DocumentSnapshot doc =
     await courseRef.doc(enteredClassCode).get();
+
 
     if(doc.exists)
     {
@@ -68,6 +77,8 @@ class _JoinNewState extends State<JoinNew> {
 
   addStudentToTheCloud({String courseCode}) async{
     final doc = await courseRef.doc(courseCode).get();
+
+
     if(doc.exists)
     {
       courseRef.doc(courseCode)
@@ -155,47 +166,54 @@ class _JoinNewState extends State<JoinNew> {
   }
 
   _onJoinButtonPressed() async {
+
+    //checking if the class is created by same user so that he/she can't join their own class
+    final usersData = await userRef.doc(widget.user.uid).collection('createdCoursesByUser').doc(enteredClassCode).get();
+    final bool isClassCreatedByTheSameUser = usersData.exists;
+
     if(enteredClassCode!=null){
       final courseDocs =await courseRef.doc(enteredClassCode).get();
       if(!courseDocs.exists){
-        showNoticeDialog();
+        showNoticeDialog("Enter Valid Course Code.");
       } else{
-        ///getting the data of the particular course through ENTERED CODE
-        await getCourseDataFor(enteredClassCode: enteredClassCode);
+        if(isClassCreatedByTheSameUser){
+          showNoticeDialog('You cannot join the class created by you');
+        } else{
+          ///getting the data of the particular course through ENTERED CODE
+          await getCourseDataFor(enteredClassCode: enteredClassCode);
 
-        ///uploading the same data to Cloud
-        uploadJoinedClassDataToCloud(
-            courseName: courseName,
-            courseCode: courseCode,
-            yearOfBatch: yearOfBatch,
-            imagePath: imagePath
-        );
+          ///uploading the same data to Cloud
+          uploadJoinedClassDataToCloud(
+              courseName: courseName,
+              courseCode: courseCode,
+              yearOfBatch: yearOfBatch,
+              imagePath: imagePath
+          );
 
-        ///adding Student to the Particular Course
-        addStudentToTheCloud(courseCode: courseCode);
-        print('joining new course');
+          ///adding Student to the Particular Course
+          addStudentToTheCloud(courseCode: courseCode);
+          print('joining new course');
 
-        ///the provider part that was here is commented below, OUTSIDE THE CLASS
+          ///the provider part that was here is commented below, OUTSIDE THE CLASS
 
-        ///now we are using Data on Cloud
+          ///now we are using Data on Cloud
 
-        Navigator.pop(context);
+          Navigator.pop(context);
+        }
       }
     }
     else{
-
-      showNoticeDialog();
-
+      showNoticeDialog("Enter Valid Course Code.");
     }
 
   }
 
-  showNoticeDialog(){
+  showNoticeDialog(String message){
     Navigator.of(context).push(
       PageRouteBuilder(
           pageBuilder: (context, _, __) => CupertinoAlertDialog(
             title: Text("Note"),
-            content: Text("Enter Valid Course Code."),
+            content: Text(message),
             actions: <Widget>[
               CupertinoDialogAction(
                   onPressed: () {

@@ -1,10 +1,12 @@
 
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
+//MQD
 final coursesRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
 
@@ -94,18 +96,25 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
             ),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 50, horizontal: 25),
+            padding: EdgeInsets.symmetric(
+                vertical: (6.12*SizeConfig.heightMultiplier).roundToDouble(),//50
+                horizontal: (6.37*SizeConfig.widthMultiplier).roundToDouble(),//25
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
+                topLeft: Radius.circular(
+                    (5.1*SizeConfig.widthMultiplier).roundToDouble()
+                ),//20
+                topRight: Radius.circular(
+                    (5.1*SizeConfig.widthMultiplier).roundToDouble()
+                ),//20
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 40,
+                  height: (4.9*SizeConfig.heightMultiplier).roundToDouble(),//40
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -126,7 +135,7 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                   ],
                 ),
                 SizedBox(
-                  height: 16,
+                  height: (1.96*SizeConfig.heightMultiplier).roundToDouble(),//16
                 ),
                 Container(
                   child: Column(
@@ -137,12 +146,12 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                         style: TextStyle(color: CupertinoColors.destructiveRed),
                       ),
                       SizedBox(
-                        height: 4,
+                        height:(0.49*SizeConfig.heightMultiplier).roundToDouble(),
                       ),
                       Text(
                           '1. You can also add student manually.'),
                       SizedBox(
-                        height: 10,
+                        height:(1.22*SizeConfig.heightMultiplier).roundToDouble() ,//10
                       ),
                       Text(
                           "2. This helps to have you record of students who doesnot have phone"),

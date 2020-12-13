@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//this is for text purpose only
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 
 

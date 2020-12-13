@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:attendo/modals/size_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -82,11 +83,6 @@ class _SignInPageState extends State<SignInPage> {
 
   ///method that builds signInScreen
   CupertinoPageScaffold signInScreen(BuildContext context) {
-    final kStyle = TextStyle(
-        fontSize: 45,
-        fontFamily: 'inter',
-        fontWeight: FontWeight.w900,
-        color: CupertinoColors.white);
 
     return CupertinoPageScaffold(
       child: widget.isThemeLight ? lightThemeLogin() : darkThemeLogin(),
@@ -108,26 +104,26 @@ class _SignInPageState extends State<SignInPage> {
       Column(
         children: [
           SizedBox(
-            height: 680,
+            height: 83.33*SizeConfig.heightMultiplier,
           ),
           GestureDetector(
             onTap: _signInWithGoogle,
             child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 62),
-                padding: EdgeInsets.symmetric(vertical: 5),
+                margin: EdgeInsets.symmetric(horizontal: 15.81*SizeConfig.widthMultiplier),
+                padding: EdgeInsets.symmetric(vertical: 0.61*SizeConfig.heightMultiplier),
                 decoration: BoxDecoration(
                     color: Color(0xFF0000CC),
-                    borderRadius: BorderRadius.circular(6)),
+                    borderRadius: BorderRadius.circular(0.8*SizeConfig.heightMultiplier)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image(
                       image: AssetImage('assets/images/google_sign.png'),
-                      height: 30,
-                      width: 30,
+                      height: 3.67*SizeConfig.heightMultiplier,
+                      width: 7.65*SizeConfig.widthMultiplier,
                     ),
                     SizedBox(
-                      width: 10,
+                      width: 2.55*SizeConfig.widthMultiplier,
                     ),
                     Text(
                       'Continue with Google',
@@ -137,13 +133,13 @@ class _SignInPageState extends State<SignInPage> {
                 ),),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 26, vertical: 4),
-            margin: EdgeInsets.only(left: 20, right: 20, top: 40),
+            padding: EdgeInsets.symmetric(horizontal: 6.63*SizeConfig.widthMultiplier, vertical: 0.49*SizeConfig.heightMultiplier),
+            margin: EdgeInsets.only(left: 5.1*SizeConfig.widthMultiplier, right: 5.1*SizeConfig.widthMultiplier, top: 4.9*SizeConfig.heightMultiplier),
             child: Center(
               child: Text(
                 "By continuing you agree Okays's Terms of services & Privacy Policy.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: CupertinoColors.white, fontSize: 12),
+                style: TextStyle(color: CupertinoColors.white, fontSize: 1.47*SizeConfig.textMultiplier),
               ),
             ),
           )
@@ -167,28 +163,28 @@ class _SignInPageState extends State<SignInPage> {
       Column(
         children: [
           SizedBox(
-            height: 680,
+            height: 83.33*SizeConfig.heightMultiplier,
           ),
           GestureDetector(
             onTap: _signInWithGoogle,
             child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 62),
-                padding: EdgeInsets.symmetric(vertical: 5),
+                margin: EdgeInsets.symmetric(horizontal: 15.81*SizeConfig.widthMultiplier),
+                padding: EdgeInsets.symmetric(vertical: 0.61*SizeConfig.heightMultiplier),
                 decoration: BoxDecoration(
                   // color: CupertinoColors.systemBlue,
                   color: Color(0xFF13375B),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(0.8*SizeConfig.heightMultiplier),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image(
                       image: AssetImage('assets/images/google_sign.png'),
-                      height: 30,
-                      width: 30,
+                      height: 3.67*SizeConfig.heightMultiplier,
+                      width: 7.65*SizeConfig.widthMultiplier,
                     ),
                     SizedBox(
-                      width: 10,
+                      width: 2.55*SizeConfig.widthMultiplier,
                     ),
                     Text(
                       'Continue with Google',
@@ -198,13 +194,13 @@ class _SignInPageState extends State<SignInPage> {
                 )),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 26, vertical: 4),
-            margin: EdgeInsets.only(left: 20, right: 20, top: 40),
+            padding: EdgeInsets.symmetric(horizontal: 6.63*SizeConfig.widthMultiplier, vertical: 0.49*SizeConfig.heightMultiplier),
+            margin: EdgeInsets.only(left: 5.1*SizeConfig.widthMultiplier, right: 5.1*SizeConfig.widthMultiplier, top: 4.9*SizeConfig.heightMultiplier),
             child: Center(
               child: Text(
                 "By continuing you agree Okays's Terms of services & Privacy Policy.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: CupertinoColors.white, fontSize: 12),
+                style: TextStyle(color: CupertinoColors.white, fontSize: 1.47*SizeConfig.textMultiplier),
               ),
             ),
           )

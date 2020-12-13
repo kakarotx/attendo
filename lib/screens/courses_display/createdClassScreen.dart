@@ -47,29 +47,19 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
                       padding: EdgeInsets.zero,
                       child: Text(
                         'Create'
-                        // size: 20,
                       ),
                       onPressed: () async {
                         print('+ pressed');
                         Navigator.push(context, CupertinoPageRoute(
-                            builder: (context)=>CreateNewClass(currentUser: widget.user,),fullscreenDialog: true));
-                        // await showCupertinoModalBottomSheet<Course>(
-                        //   context: context,
-                        //   builder: (context) => CreateNewClassPopUp(
-                        //     toggleScreenCallBack: toggleZeroCCScreen,
-                        //     currentUser: widget.user,
-                        //   ),
-                        // );
+                            builder: (context)=>CreateNewClass(currentUser: widget.user,),fullscreenDialog: true),);
                       },
                     ),
                   ),
                 ];
               },
-              body:buildCourseCards()),
+              body:buildCourseCards(),),
               ///TODO: ZeroClass Screen to be made
             ///and it will be controlled here with a bool
-        // child:
-
       );
   }
 

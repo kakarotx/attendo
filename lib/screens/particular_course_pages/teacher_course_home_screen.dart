@@ -11,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share/share.dart';
-
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -61,6 +60,67 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
   ];
 
 
+  ///new one
+  // writeOnPdf() async {
+  //   ///
+  //   ///
+  //   final QuerySnapshot studentsData = await courseRef
+  //       .doc(widget.course.courseCode)
+  //       .collection('studentsEnrolled')
+  //       .get();
+  //
+  //   studentsData.docs.forEach((studentData) {
+  //     // print(doc.data());
+  //     List<String> oneStudentData = [];
+  //     final studentName = studentData.data()['studentName'];
+  //     print('student name');
+  //     print(studentName);
+  //     final int absent = studentData.data()['absent'];
+  //     print('absent count');
+  //     print(absent);
+  //     final int present = studentData.data()['present'];
+  //
+  //     print('add data to list');
+  //     oneStudentData.add(studentName);
+  //     oneStudentData.add(present.toString());
+  //     oneStudentData.add(absent.toString());
+  //
+  //     int presentPercentage;
+  //     try {
+  //       presentPercentage = (present * 100) ~/ (present + absent);
+  //     } catch (e) {
+  //       presentPercentage = 0;
+  //     }
+  //     oneStudentData.add('$presentPercentage%');
+  //
+  //     listOfData.add(oneStudentData);
+  //
+  //     },
+  //   );
+  //   print(listOfData);
+  //
+  //   ///
+  //   ///
+  //   pdf.addPage(
+  //     pw.MultiPage(
+  //       pageFormat: PdfPageFormat.a5,
+  //       margin: pw.EdgeInsets.all(32),
+  //       build: (pw.Context context) {
+  //         return <pw.Widget>[
+  //           pw.Header(
+  //               level: 1,
+  //               text:
+  //                   'Attendence Sheet for Course: ${widget.course.courseName}'),
+  //           pw.Paragraph(text: 'Teacher: ${widget.course.teacherName}'),
+  //           pw.Table.fromTextArray(context: context, data: listOfData),
+  //           pw.Padding(padding: const pw.EdgeInsets.all(10)),
+  //         ];
+  //       },
+  //     ),
+  //   );
+  // }
+
+  ///old one
   writeOnPdf() async {
     ///
     ///
@@ -95,7 +155,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
 
       listOfData.add(oneStudentData);
 
-      },
+    },
     );
     print(listOfData);
 
@@ -110,7 +170,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
             pw.Header(
                 level: 1,
                 text:
-                    'Attendence Sheet for Course: ${widget.course.courseName}'),
+                'Attendence Sheet for Course: ${widget.course.courseName}'),
             pw.Paragraph(text: 'Teacher: ${widget.course.teacherName}'),
             pw.Table.fromTextArray(context: context, data: listOfData),
             pw.Padding(padding: const pw.EdgeInsets.all(10)),
@@ -119,6 +179,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       ),
     );
   }
+
   final List<String> monthsList = [
     'Jan',
     'Feb',
@@ -134,25 +195,31 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
     'Dec'
   ];
 
+  ///new one
+  // Future savePdf() async {
+  //
+  //
+  //   final dir = await getExternalStorageDirectory();
+  //
+  //   print("Directoryyyyyyyyy:${dir.path}");
+  //
+  //   final String path = "${dir.path}/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
+  //
+  //   final file = File(path);
+  //
+  //   await file.writeAsBytes(pdf.save());
+  //
+  // }
+
+  ///old one
   Future savePdf() async {
-    // Directory documentDirectory = await getApplicationDocumentsDirectory();
-    //
-    // String documentPath = documentDirectory.path;
-    // print('QWERTY::: $documentPath');
-    // File file = File("$documentPath/example.pdf");
-    //
-    // await file.writeAsBytesSync(pdf.save());
-    ///
-    ///
-    final dir = await getExternalStorageDirectory();
-    print("Directoryyyyyyyyy:${dir.path}");
-    final String path = "${dir.path}/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
-    //
-    // String path = '/storage/emulated/0/Download/'; //this is custom address
-    final file = File(path);
+    Directory documentDirectory = await getApplicationDocumentsDirectory();
 
-    await file.writeAsBytes(pdf.save());
+    String documentPath = documentDirectory.path;
 
+    File file = File("$documentPath/example.pdf");
+
+    file.writeAsBytesSync(pdf.save());
   }
 
   @override
@@ -259,6 +326,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                 ),
               ),
               classRecordContainer(),
+              // CustomCalendar(),
             ],
           );
         }
@@ -326,7 +394,10 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                 stream: courseRef.doc(widget.course.courseCode).collection('studentsEnrolled').snapshots(),
                 builder: (context, snapshot) {
                   if(!snapshot.hasData){
-                    return CupertinoActivityIndicator();
+                    return Text(
+                      "0",
+                      style: TextStyle(color: CupertinoColors.white, fontSize: 42),
+                    );
                   }
                   final noOfStudents = snapshot.data.docs.length;
                   return Text(
@@ -365,18 +436,32 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                 },
                 child: Text('Take Attendence')),
             CupertinoActionSheetAction(
-                onPressed: () async {
-
+                onPressed: () async{
+                  ///
+                  ///
+                  // await writeOnPdf();
+                  // await savePdf();
+                  //
+                  // Directory documentDirectory =
+                  // await getExternalStorageDirectory();
+                  //
+                  // String documentPath = documentDirectory.path;
+                  //
+                  // String fullPath = "$documentPath/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
+                  // print(fullPath);
+                  // Navigator.pop(context);
+                  ///
+                  ///
                   await writeOnPdf();
                   await savePdf();
 
                   Directory documentDirectory =
-                  await getExternalStorageDirectory();
+                  await getApplicationDocumentsDirectory();
 
                   String documentPath = documentDirectory.path;
-                  // String documentPath = '/storage/emulated/0/Download/';
-                  String fullPath = "$documentPath/${widget.course.courseCode}_${widget.course.courseName}_${DateTime.now().day}${monthsList[DateTime.now().month]}${DateTime.now().year}.pdf";
-                  print(fullPath);
+
+                  String fullPath = "$documentPath/example.pdf";
+
                   Navigator.pop(context);
 
                   Navigator.push(
@@ -384,12 +469,10 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
                       CupertinoPageRoute(
                           builder: (context) => PdfPreviewScreen(
                             path: fullPath,
-                          )));
+                          ),
+                      ),
+                  );
                 },
-                // print('downLoading Sheet');
-                // showNoticeDialog();
-                // Navigator.pop(context);
-                // },
                 child: Text('Download AttendenceSheet')),
             CupertinoActionSheetAction(
                 onPressed: () {
@@ -465,16 +548,46 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
   }
 
   ///we are the deleting the Course from [CoursesDetails] collection
-  void deleteTheCourseFromCloud(Course course) {
+  void deleteTheCourseFromCloud(Course course) async{
     courseRef.doc(course.courseCode).delete();
+
     userRef
         .doc(widget.user.uid)
         .collection('createdCoursesByUser')
         .doc(course.courseCode)
         .delete();
+
+    final studentsEnrolled = await userRef
+        .doc(widget.user.uid)
+        .collection('createdCoursesByUser')
+        .doc(course.courseCode)
+        .collection('studentsEnrolled').get();
+
+    //when we delete the createdCoursesByUser collection ..
+    // the [studentsEnrolled] and [messages] collection remains
+    studentsEnrolled.docs.forEach((element) {
+      if(element.exists){
+       element.reference.delete();
+      }
+    });
+
+    final messages = await userRef
+        .doc(widget.user.uid)
+        .collection('createdCoursesByUser')
+        .doc(course.courseCode)
+        .collection('messagesByTeacher').get();
+
+    //when we delete the createdCoursesByUser collection ..
+    // the [studentsEnrolled] and [messages] collection remains
+    messages.docs.forEach((element) {
+      if(element.exists){
+        element.reference.delete();
+      }
+    });
+
   }
 
-  ///I made a Collection on firebase [DeletedCourses],
+  ///I made a Collection on firebase: [DeletedCourses],
   ///because Student have to be notified that the class is deleted
   ///ON Student PAGE, I have implemented a logic which checks if
   ///the Document with the COURSE CODE exists on [DeletedCourses]
@@ -483,21 +596,4 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
         {'courseName': course.courseName, 'teacherName': course.teacherName});
   }
 
-  showNoticeDialog() {
-    showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            // title: Text("Note"),
-            content: Text("This feature is Coming Soon."),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Okays")),
-            ],
-          );
-        });
-  }
 }

@@ -1,8 +1,8 @@
 import 'package:attendo/home_page.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:attendo/sign_in/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:attendo/main.dart';
 
 class LandingPage extends StatefulWidget {
@@ -21,19 +21,6 @@ class _LandingPageState extends State<LandingPage> {
     });
 
   }
-  // getBoolValuesSF() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   //Return bool
-  //   bool boolValue = prefs.getBool('isThemeLight');
-  //   isThemeLight = boolValue;
-  //   print('isThemeLight saved as $boolValue locally');
-  // }
-
-  // addBoolToSF() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setBool('isThemeLight', isThemeLight);
-  // }
-
 
 
   @override
@@ -108,57 +95,68 @@ class _LandingPageBodyState extends State<LandingPageBody> {
     getBoolValuesSF();
     setThemeToNull();
 
-    return CupertinoApp(
-      theme:
-      isThemeLight?
-      CupertinoThemeData(brightness: Brightness.light):
-      CupertinoThemeData(brightness: Brightness.dark),
+    return LayoutBuilder(
+      builder: (context, constraints){
+        return OrientationBuilder(
+          builder: (context, orientation){
+            SizeConfig().init(constraints, orientation);
+            return CupertinoApp(
+              theme:
+              isThemeLight?
+              CupertinoThemeData(brightness: Brightness.light):
+              CupertinoThemeData(brightness: Brightness.dark),
 
-      debugShowCheckedModeBanner: false,
+              debugShowCheckedModeBanner: false,
 
-      home: CupertinoPageScaffold(
-        resizeToAvoidBottomInset: false,
-        child: StreamBuilder<auth.User>(
-            initialData: auth.FirebaseAuth.instance.currentUser,
-            ///this is the stream of type [User] and we listen to it
-            ///when any new data comes
-            ///the builder: property builds it self every time new
-            ///data comes
-            stream: auth.FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              ///this snapshot contains the Data from our Stream
-              ///Stream can contain any data eg. [int, list, null]
-              ///
-              if (snapshot.connectionState == ConnectionState.active) {
-                final user = snapshot.data;
-                if (user == null) {
-                  print('qwerty ::${user?.uid}');
-                  return SignInPage(
-                    isThemeLight: isThemeLight,
-                  );
-                } else{
-                  print('qwerty ::${user?.uid}');
-                  return
-                    HomePage(toggleTheme: () {
-                    print('theme changed');
 
-                    print('theme saved to phone locally as ${!isThemeLight}');
-                    setState(() {
-                      isThemeLight = !isThemeLight;
-                    });
-                    addBoolToSF();
-                  },);
-                }
-              } else{
-                return CupertinoPageScaffold(
-                  child: Center(
-                    child: CupertinoActivityIndicator(),
-                  ),
-                );
-              }
+              home: CupertinoPageScaffold(
+                resizeToAvoidBottomInset: false,
+                child: StreamBuilder<auth.User>(
+                    initialData: auth.FirebaseAuth.instance.currentUser,
+                    ///this is the stream of type [User] and we listen to it
+                    ///when any new data comes
+                    ///the builder: property builds it self every time new
+                    ///data comes
+                    stream: auth.FirebaseAuth.instance.authStateChanges(),
+                    builder: (context, snapshot) {
+                      ///this snapshot contains the Data from our Stream
+                      ///Stream can contain any data eg. [int, list, null]
+                      ///
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        final user = snapshot.data;
 
-            }),
-      ),
+                        if (user == null) {
+                          print('qwerty ::${user?.uid}');
+                          return SignInPage(
+                            isThemeLight: isThemeLight,
+                          );
+                        } else{
+                          print('qwerty ::${user?.uid}');
+                          return
+                            HomePage(toggleTheme: () {
+                              print('theme changed');
+
+                              print('theme saved to phone locally as ${!isThemeLight}');
+                              setState(() {
+                                isThemeLight = !isThemeLight;
+                              });
+                              addBoolToSF();
+                            },);
+                        }
+                      } else{
+                        return CupertinoPageScaffold(
+                          child: Center(
+                            child: CupertinoActivityIndicator(),
+                          ),
+                        );
+                      }
+                    }),
+              ),
+            );
+          },
+        );
+      },
+
     );
   }
 }

@@ -105,7 +105,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
                                 imagePath: imagePath,
                                 yearOfBatch: yearOfBatch.toString()),
                           );
-                        }));
+                        },),);
                   },
                 ),
               );

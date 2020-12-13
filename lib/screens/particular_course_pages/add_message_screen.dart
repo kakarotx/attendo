@@ -1,4 +1,5 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       children: [
         widget.canSendMessages
             ? Container(
-                margin: EdgeInsets.symmetric(horizontal: 14),
+                margin: EdgeInsets.symmetric(horizontal: 3.57*SizeConfig.widthMultiplier),
                 child: CupertinoTextField(
                   controller: textEditingController,
                   onChanged: (message) {
@@ -115,7 +116,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       'senderEmail': course.teacherName,
       'textMessage': textMessage,
       'teacherImageUrl': course.teacherImageUrl,
-      'teacherName': user.displayName,
+      'teacherName': course.teacherName,
     });
   }
 
@@ -197,10 +198,15 @@ class MessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 14, right: 14, top: 16),
-      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      margin: EdgeInsets.only(
+          left: 3.57*SizeConfig.widthMultiplier,
+          right: 3.57*SizeConfig.widthMultiplier,
+          top: 1.96*SizeConfig.heightMultiplier),
+      padding: EdgeInsets.symmetric(
+          horizontal: 3.57*SizeConfig.widthMultiplier,
+          vertical: 1.96*SizeConfig.heightMultiplier),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(1.53*SizeConfig.widthMultiplier),
         color: CupertinoTheme.of(context).barBackgroundColor,
       ),
       child: Column(
@@ -214,7 +220,7 @@ class MessageCard extends StatelessWidget {
                   CircleAvatar(
                     backgroundImage: NetworkImage(teacherImageUrl),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 2.55*SizeConfig.widthMultiplier),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -232,7 +238,7 @@ class MessageCard extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(height: 40),
+          SizedBox(height: 4.9*SizeConfig.heightMultiplier),
           Container(
             child: Text(
               textMessage,

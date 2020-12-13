@@ -1,3 +1,4 @@
+import 'package:attendo/modals/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,9 +46,11 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
   _showToast({String toastMsg, IconData toastIcon}) {
     Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      padding: EdgeInsets.symmetric(
+          horizontal: (6.12*SizeConfig.widthMultiplier).roundToDouble(),
+          vertical: (1.47*SizeConfig.heightMultiplier).roundToDouble()),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular((1.27*SizeConfig.widthMultiplier).roundToDouble()),
         color: CupertinoColors.black,
       ),
       child: Row(
@@ -58,7 +61,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
             color: CupertinoColors.white,
           ),
           SizedBox(
-            width: 12.0,
+            width: (3.06*SizeConfig.widthMultiplier).roundToDouble(),
           ),
           Text(
             toastMsg,
@@ -123,18 +126,19 @@ class _CreateNewClassState extends State<CreateNewClass> {
             ),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 50, horizontal: 25),
+            padding: EdgeInsets.symmetric(vertical: (6.12*SizeConfig.heightMultiplier).roundToDouble(),
+                horizontal: (6.37*SizeConfig.widthMultiplier).roundToDouble()),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
+                topLeft: Radius.circular((5.1*SizeConfig.widthMultiplier).roundToDouble()),
+                topRight: Radius.circular((5.1*SizeConfig.widthMultiplier).roundToDouble()),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 40,
+                  height: (4.90*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -155,7 +159,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
                   ],
                 ),
                 SizedBox(
-                  height: 5,
+                  height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -176,7 +180,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
                   ],
                 ),
                 SizedBox(
-                  height: 16,
+                  height: (1.96*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
                 Container(
                   child: Column(
@@ -187,19 +191,19 @@ class _CreateNewClassState extends State<CreateNewClass> {
                         style: TextStyle(color: CupertinoColors.destructiveRed),
                       ),
                       SizedBox(
-                        height: 4,
+                        height: (0.46*SizeConfig.heightMultiplier).roundToDouble(),//4
                       ),
                       Text(
                           '1. Enter a CourseName for the course you want to create'
                           ' as well as the year of the batch.'),
                       SizedBox(
-                        height: 10,
+                        height: (1.22*SizeConfig.heightMultiplier).roundToDouble(),//10
                       ),
                       Text(
                           "2. A Code for your class will be provided to you which you can share"
                           " with your class so they can join in."),
                       SizedBox(
-                        height: 10,
+                        height: (1.22*SizeConfig.heightMultiplier).roundToDouble(),
                       ),
                       Text(
                           "3. Student List with their data will be available to you."),

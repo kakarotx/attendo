@@ -2,7 +2,7 @@ import 'package:attendo/modals/course_class.dart';
 import 'package:flutter/cupertino.dart';
 
 
-const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 12);
+const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 14);
 const double cardBorderRadius = 8;
 
 class CardWidget extends StatelessWidget {
@@ -42,13 +42,13 @@ class CardWidget extends StatelessWidget {
             children: [
               Text(
                 newCourse.courseName,
-                style: cardTextStyle,
+                style: cardTextStyle.copyWith(fontSize: 15),
               ),
               SizedBox(
                 height: 5,
               ),
               Text(
-                'Batch Year :  ${newCourse.yearOfBatch}',
+                '${newCourse.yearOfBatch}',
                 style: cardTextStyle,
               ),
               SizedBox(

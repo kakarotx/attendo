@@ -1,3 +1,4 @@
+import 'package:attendo/modals/size_config.dart';
 import 'package:attendo/screens/other_screens/developers.dart';
 import 'package:attendo/screens/other_screens/help_dart.dart';
 import 'package:attendo/screens/particular_course_pages/set_roll_no.dart';
@@ -20,12 +21,7 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  void _signOut()async{
-    print('signing out');
-    await FirebaseAuth.instance.signOut();
-    GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
-  }
+
   String rollNo;
   String enteredRollNumber;
 
@@ -33,6 +29,40 @@ class _UserProfileState extends State<UserProfile> {
     userRef.doc(widget.user.uid).update({
       'rollNo': enteredRollNumber,
     });
+  }
+  void _signOut()async{
+    print('signing out');
+    await FirebaseAuth.instance.signOut();
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+  }
+
+  ///this will show a Dailog after we press delete Course button
+  ///which has 2 options, [cancel] and [delete]
+  void confirmDeleteAlert(BuildContext context) {
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Confirm'),
+            content: Text("Do you want to Logout?"),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel")),
+              CupertinoDialogAction(
+                  textStyle: TextStyle(color: CupertinoColors.destructiveRed),
+                  // isDefaultAction: true,
+                  onPressed: (){
+                    Navigator.pop(context);
+                    _signOut();
+                  },
+                  child: Text("Log0ut")),
+            ],
+          );
+        });
   }
 
 
@@ -45,8 +75,10 @@ class _UserProfileState extends State<UserProfile> {
           middle:Text('Profile'),
           trailing: CupertinoButton(
               padding: EdgeInsets.zero,
-              onPressed: _signOut,
-              child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),)),
+              onPressed: (){
+                confirmDeleteAlert(context);
+              },
+              child: Text('Logout', style: TextStyle(color: CupertinoColors.activeBlue),),),
         ),
         child: listOfOptions(),
     );
@@ -69,7 +101,7 @@ class _UserProfileState extends State<UserProfile> {
                   }
               },
             ),
-            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
             GestureDetector(
               // padding: EdgeInsets.zero,
               child: CupertinoTile(
@@ -86,8 +118,8 @@ class _UserProfileState extends State<UserProfile> {
                 // setAttendenceDialog();
               },
             ),
-            Divider(height: 0.3,color: CupertinoColors.inactiveGray,),
-            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            Divider(height: 0.03*SizeConfig.heightMultiplier,color: CupertinoColors.inactiveGray,),
+            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
             GestureDetector(
               onTap: widget.toggleTheme,
               child: CupertinoTile(
@@ -95,7 +127,7 @@ class _UserProfileState extends State<UserProfile> {
                 trailingWidget: Icon(CupertinoIcons.forward),
               ),
             ),
-            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
             GestureDetector(
               // padding: EdgeInsets.zero,
               child: CupertinoTile(
@@ -108,7 +140,7 @@ class _UserProfileState extends State<UserProfile> {
                 Navigator.push(context, CupertinoPageRoute(builder: (context)=>HelpPage(),),);
               },
             ),
-            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
             GestureDetector(
               // padding: EdgeInsets.zero,
               child: CupertinoTile(
@@ -122,13 +154,14 @@ class _UserProfileState extends State<UserProfile> {
                    ),);
               },
             ),
-            Divider(height: 1,color: CupertinoColors.inactiveGray,),
+            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
           ],
         )
     );
   }
 
 
+  //not used anywhere DO NOT DELETE
   setAttendenceDialog(){
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -178,29 +211,31 @@ class EditProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(
+          vertical: (2.45*SizeConfig.heightMultiplier).roundToDouble(),
+          horizontal: (5.1*SizeConfig.widthMultiplier).roundToDouble()),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(user.photoURL),
-            radius: 28,
+            radius: (7.14*SizeConfig.widthMultiplier).roundToDouble(),
           ),
           SizedBox(
-            height: 2,
+            height: (0.24*SizeConfig.heightMultiplier).roundToDouble(),
           ),
           Text(
             user.displayName,
-            style: TextStyle(fontWeight: FontWeight.w500,fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.w500,fontSize: (2.20*SizeConfig.textMultiplier.roundToDouble())),
           ),
-          SizedBox(height: 2,),
-          Text(user.email, style: TextStyle(fontSize: 12,),),
+          SizedBox(height: (0.24*SizeConfig.heightMultiplier).roundToDouble(),),
+          Text(user.email, style: TextStyle(fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble(),),),
           SizedBox(
-            height: 2,
+            height: 0.24*SizeConfig.heightMultiplier,
           ),
           rollNo==null?Container():Text(
             'Roll No: $rollNo',
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble()),
           ),
         ],
       ),
@@ -224,7 +259,11 @@ class CupertinoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: addPadding? EdgeInsets.only(top: 6,bottom: 7,left: 10):EdgeInsets.only(left: 10),
+      padding: addPadding? EdgeInsets.only(
+          top: (0.73*SizeConfig.heightMultiplier).roundToDouble(),
+          bottom: (0.73*SizeConfig.heightMultiplier).roundToDouble(),
+          left: (2.55*SizeConfig.widthMultiplier).roundToDouble()):
+      EdgeInsets.only(left:  (2.55*SizeConfig.widthMultiplier).roundToDouble()),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         // crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -236,9 +275,6 @@ class CupertinoTile extends StatelessWidget {
           ),
           trailingWidget
         ],
-      ),
-      decoration: BoxDecoration(
-        // color: CupertinoColors.lightBackgroundGray,
       ),
     );
   }

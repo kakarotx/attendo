@@ -1,9 +1,12 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:attendo/screens/other_screens/createNewStudent_popup.dart';
 import 'package:attendo/screens/particular_course_pages/add_message_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+//MediaQuery r2d
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 
@@ -20,7 +23,7 @@ class _StudentsListState extends State<StudentsList> {
     return StreamBuilder<QuerySnapshot>(
         stream: courseRef
             .doc(widget.course.courseCode)
-            .collection('studentsEnrolled').orderBy('studentName',descending: true)
+            .collection('studentsEnrolled').orderBy('studentName',descending: false)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -55,8 +58,8 @@ class _StudentsListState extends State<StudentsList> {
               print(studentCards.length);
             }
             return ListView.builder(
-              scrollDirection: Axis.vertical,
-              // shrinkWrap: true,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: studentCards.length,
               itemBuilder: (context, int) {
                 print('building');
@@ -69,14 +72,16 @@ class _StudentsListState extends State<StudentsList> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          margin: EdgeInsets.only(left: 12, right: 12, bottom: 10),
+          margin: EdgeInsets.only(
+              left:( SizeConfig.one_W*12).roundToDouble(),
+              right: (SizeConfig.one_W*12).roundToDouble(),
+              bottom: (SizeConfig.one_H*10).roundToDouble()),
           child: CupertinoButton.filled(
             // padding: EdgeInsets.zero,
             onPressed: () {
@@ -96,8 +101,12 @@ class _StudentsListState extends State<StudentsList> {
           ),
         ),
         Container(
-          height: 550,
-          child: buildStudentList()
+          //550
+          // height: (SizeConfig.one_H*400).roundToDouble(),
+          child: SingleChildScrollView(
+            child: buildStudentList(),
+          )
+
         ),
       ],
     );
@@ -132,8 +141,13 @@ class StudentCard extends StatelessWidget {
     ///
 
     return Container(
-      margin: EdgeInsets.only(left: 12, right: 12, bottom: 10),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: EdgeInsets.only(
+          left: (SizeConfig.one_W*12).roundToDouble(),
+          right: (SizeConfig.one_W*12).roundToDouble(),
+          bottom: (SizeConfig.one_H*10).roundToDouble()),
+      padding: EdgeInsets.symmetric(
+          horizontal: (SizeConfig.one_W*10).roundToDouble(),
+          vertical: (SizeConfig.one_H*10).roundToDouble()),
       decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: gradient,
@@ -142,7 +156,7 @@ class StudentCard extends StatelessWidget {
             begin: Alignment.centerLeft,
           ),
           color: CupertinoThemeData().primaryColor,
-          borderRadius: BorderRadius.circular(6)),
+          borderRadius: BorderRadius.circular((SizeConfig.one_W*6).roundToDouble())),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -153,7 +167,7 @@ class StudentCard extends StatelessWidget {
                   backgroundImage: NetworkImage(studentPhotoUrl),
                 ),
                 SizedBox(
-                  width: 10,
+                  width: (SizeConfig.one_W*10).roundToDouble(),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +177,7 @@ class StudentCard extends StatelessWidget {
                       style: TextStyle(color: presentPercentage>=40?CupertinoTheme.of(context).primaryContrastingColor:CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
                     ),
                     SizedBox(
-                      height: 3,
+                      height: (SizeConfig.one_H*3).roundToDouble(),
                     ),
                     Text(
                       studentEmailId,
@@ -177,7 +191,7 @@ class StudentCard extends StatelessWidget {
           Container(
             child: Text(
               '$presentPercentage%',
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: (SizeConfig.one_W*20).roundToDouble()),
             ),
           )
         ],

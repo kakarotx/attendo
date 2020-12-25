@@ -41,4 +41,11 @@ class SizeConfig {
     print('textMultiplier::$textMultiplier');
 
   }
+
+  //making new UNIT
+  static double one_W = (0.25*widthMultiplier).roundToDouble();
+
+  static double one_H = (0.12*heightMultiplier).roundToDouble();
+
+
 }

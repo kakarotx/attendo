@@ -1,9 +1,10 @@
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:flutter/cupertino.dart';
 
-
-const cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: 14);
-const double cardBorderRadius = 8;
+//MediaQuery r2d
+final cardTextStyle = TextStyle(color: CupertinoColors.white, fontSize: (SizeConfig.one_W*14).roundToDouble());
+final double cardBorderRadius = (SizeConfig.one_W*8).roundToDouble();
 
 class CardWidget extends StatelessWidget {
   CardWidget({this.newCourse,this.onCardTab});
@@ -16,10 +17,16 @@ class CardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onCardTab,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all((SizeConfig.one_W*8.0).roundToDouble()),
         child: Container(
-          margin: EdgeInsets.only(bottom: 12, left: 12, right: 12),
-          padding: EdgeInsets.only(top: 15, left: 15, bottom: 15),
+          margin: EdgeInsets.only(
+              bottom: (SizeConfig.one_H*12).roundToDouble(),
+              left: (SizeConfig.one_W*12).roundToDouble(),
+              right: (SizeConfig.one_W*12).roundToDouble()),
+          padding: EdgeInsets.only(
+              top: (SizeConfig.one_H*15).roundToDouble(),
+              left: (SizeConfig.one_W*15).roundToDouble(),
+              bottom: (SizeConfig.one_W*15).roundToDouble()),
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
@@ -42,24 +49,24 @@ class CardWidget extends StatelessWidget {
             children: [
               Text(
                 newCourse.courseName,
-                style: cardTextStyle.copyWith(fontSize: 15),
+                style: cardTextStyle.copyWith(fontSize: (SizeConfig.one_W*15).roundToDouble()),
               ),
               SizedBox(
-                height: 5,
+                height: (SizeConfig.one_H*5).roundToDouble(),
               ),
               Text(
                 '${newCourse.yearOfBatch}',
                 style: cardTextStyle,
               ),
               SizedBox(
-                height: 5,
+                height: (SizeConfig.one_H*5).roundToDouble(),
               ),
               Text(
                 'Code:${newCourse.courseCode}',
                 style: cardTextStyle,
               ),
               SizedBox(
-                height: 40,
+                height: (SizeConfig.one_H*40).roundToDouble(),
               ),
               Text(
                 'Teacher: ${newCourse.teacherName}',

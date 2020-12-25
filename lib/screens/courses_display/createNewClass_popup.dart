@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:fluttertoast/fluttertoast.dart';
+
+//Media Query r2d
 
 final coursesRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
@@ -33,8 +36,10 @@ class _CreateNewClassState extends State<CreateNewClass> {
   ///list of ImagePaths which are used for creating new CardWidgets
   List<String> imagePaths = [
     'assets/images/artWork/art01.jpg',
-    'assets/images/artWork/art03.jpg',
     'assets/images/artWork/art02.jpg',
+    'assets/images/artWork/art03.jpg',
+    'assets/images/artWork/art04.jpg',
+    'assets/images/artWork/art01.jpg',
   ];
   int randomIntForImage;
 
@@ -42,39 +47,6 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
   String getRandomImg(List<String> imageList, int randomInt) {
     return imageList[randomInt];
-  }
-
-  _showToast({String toastMsg, IconData toastIcon}) {
-    Widget toast = Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: (6.12*SizeConfig.widthMultiplier).roundToDouble(),
-          vertical: (1.47*SizeConfig.heightMultiplier).roundToDouble()),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular((1.27*SizeConfig.widthMultiplier).roundToDouble()),
-        color: CupertinoColors.black,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            toastIcon,
-            color: CupertinoColors.white,
-          ),
-          SizedBox(
-            width: (3.06*SizeConfig.widthMultiplier).roundToDouble(),
-          ),
-          Text(
-            toastMsg,
-            style: TextStyle(color: CupertinoColors.white),
-          ),
-        ],
-      ),
-    );
-    // fToast.showToast(
-    //   child: toast,
-    //   gravity: ToastGravity.BOTTOM,
-    //   toastDuration: Duration(seconds: 2),
-    // );
   }
 
   ///this data has CourseDetails
@@ -94,6 +66,8 @@ class _CreateNewClassState extends State<CreateNewClass> {
       'imagePath': imagePath,
       'teacherImageUrl': widget.currentUser.photoURL,
       'isCourseDeletedByTeacher': false,
+      'totalStudents': 0,
+      'totalClasses': 0
     });
 
     ///this will upload to User Collection > CoursesCreated >
@@ -108,14 +82,17 @@ class _CreateNewClassState extends State<CreateNewClass> {
       'createdBy': widget.currentUser.displayName,
       'imagePath': imagePath,
       'yearOfBatch': year,
-      'teacherImageUrl': widget.currentUser.photoURL
+      'teacherImageUrl': widget.currentUser.photoURL,
+      'totalStudents': 0,
+      'totalClasses': 0
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
           navigationBar: CupertinoNavigationBar(
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
@@ -126,59 +103,53 @@ class _CreateNewClassState extends State<CreateNewClass> {
             ),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: (6.12*SizeConfig.heightMultiplier).roundToDouble(),
-                horizontal: (6.37*SizeConfig.widthMultiplier).roundToDouble()),
+            padding: EdgeInsets.only(
+              top: (1.96*SizeConfig.heightMultiplier).roundToDouble(),
+                bottom: (6.12*SizeConfig.heightMultiplier).roundToDouble(),
+                left: (6.37*SizeConfig.widthMultiplier).roundToDouble(),
+                right: (6.37*SizeConfig.widthMultiplier).roundToDouble(),
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular((5.1*SizeConfig.widthMultiplier).roundToDouble()),
                 topRight: Radius.circular((5.1*SizeConfig.widthMultiplier).roundToDouble()),
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: (4.90*SizeConfig.heightMultiplier).roundToDouble(),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      'Course  : ',
-                    ),
-                    Expanded(
-                      child: CupertinoTextField(
-                        placeholder: 'Enter Course Name',
-                        onChanged: (String newValue) {
-                          return courseName = newValue;
-                        },
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+                // SizedBox(
+                //   height: (4.90*SizeConfig.heightMultiplier).roundToDouble(),
+                // ),
+                Text(
+                  'Course Name',
                 ),
                 SizedBox(
                   height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      'Batch/Class  :    ',
-                    ),
-                    Expanded(
-                      child: CupertinoTextField(
-                        placeholder: 'Enter Batch Year or Class',
-                          // keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          onChanged: (String newValue) {
-                            return yearOfBatch = (newValue);
-                          }),
-                    ),
-                  ],
+                CupertinoTextField(
+                  placeholder: 'Enter Course Name',
+                  onChanged: (String newValue) {
+                    return courseName = newValue;
+                  },
+                  textAlign: TextAlign.center,
                 ),
+                SizedBox(
+                  height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
+                ),
+                Text(
+                  'Batch/Class Description',
+                ),
+                SizedBox(
+                  height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
+                ),
+                CupertinoTextField(
+                  placeholder: 'Enter Batch Year or Class',
+                    // keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    onChanged: (String newValue) {
+                      return yearOfBatch = (newValue);
+                    }),
                 SizedBox(
                   height: (1.96*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
@@ -194,19 +165,13 @@ class _CreateNewClassState extends State<CreateNewClass> {
                         height: (0.46*SizeConfig.heightMultiplier).roundToDouble(),//4
                       ),
                       Text(
-                          '1. Enter a CourseName for the course you want to create'
-                          ' as well as the year of the batch.'),
+                          '1. Enter a CourseName for your class and class description.'),
                       SizedBox(
                         height: (1.22*SizeConfig.heightMultiplier).roundToDouble(),//10
                       ),
                       Text(
                           "2. A Code for your class will be provided to you which you can share"
-                          " with your class so they can join in."),
-                      SizedBox(
-                        height: (1.22*SizeConfig.heightMultiplier).roundToDouble(),
-                      ),
-                      Text(
-                          "3. Student List with their data will be available to you."),
+                          " with your class so they can join."),
                     ],
                   ),
                 )
@@ -276,25 +241,42 @@ class _CreateNewClassState extends State<CreateNewClass> {
         ///whether the enteredCode exists or not
         ///Later we will check enteredCode in database
 
-        // widget.toggleScreenCallBack();
-        _showToast(
-            toastMsg: 'Class Created',
-            toastIcon: CupertinoIcons.check_mark);
 
         Navigator.pop(context);
 
         ///toast msg when any field is left and create class is pressed
-        _showToast(
-            toastMsg: 'Enter Valid Details',
-            toastIcon: CupertinoIcons.drop_triangle_fill);
 
-        ///this part is uploading course details as a Document to fireStore
-        ///whose ID is set as CourseCode.
-        uploadCourseDataToCloud(
-            codeOfCourse: courseCode,
-            nameOfCourse: courseName,
-            year: yearOfBatch,
-            imagePath: getRandomImg(imagePaths, randomIntForImage));
+        try{
+          ///this part is uploading course details as a Document to fireStore
+          ///whose ID is set as CourseCode.
+          uploadCourseDataToCloud(
+              codeOfCourse: courseCode,
+              nameOfCourse: courseName,
+              year: yearOfBatch,
+              imagePath: getRandomImg(imagePaths, randomIntForImage));
+
+          Fluttertoast.showToast(
+              msg: "New course added",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: CupertinoTheme.of(context).primaryColor,
+              textColor: CupertinoColors.white,
+              fontSize: 16.0
+          );
+        } catch(e){
+
+          Fluttertoast.showToast(
+              msg: "Unexpected Error, try again",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: CupertinoTheme.of(context).primaryColor,
+              textColor: CupertinoColors.white,
+              fontSize: 16.0
+          );
+
+        }
+
+
       } else{
         showNoticeDialog();
       }

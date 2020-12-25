@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+//MediaQuery r2d
+
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
 
@@ -64,8 +66,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       children: [
         widget.canSendMessages
             ? Container(
-                margin: EdgeInsets.symmetric(horizontal: 3.57*SizeConfig.widthMultiplier),
+                margin: EdgeInsets.symmetric(horizontal: (3.57*SizeConfig.widthMultiplier).roundToDouble()),
                 child: CupertinoTextField(
+                  placeholder: "Type message for Students",
                   controller: textEditingController,
                   onChanged: (message) {
                     textMessage = message;
@@ -88,7 +91,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
               )
             : Container(),
         Container(
-          child: buildMessageList(course: widget.course),
+          // height: (SizeConfig.one_H*400).roundToDouble(),
+          child: SingleChildScrollView(
+
+        child: buildMessageList(course: widget.course,context: context)
+        )
+
         ),
       ],
     );
@@ -121,12 +129,11 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   }
 
   ///building Messages to Card
-  buildMessageList({Course course}) {
+  buildMessageList({Course course,BuildContext context}) {
     return StreamBuilder<QuerySnapshot>(
       stream: courseRef
           .doc(course.courseCode)
-          .collection('messagesByTeacher')
-          .orderBy('sendTime', descending: true)
+          .collection('messagesByTeacher').orderBy('sendTime',descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -148,6 +155,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             }
             messagesWidgets.add(
               MessageCard(
+                canSendMsg: widget.canSendMessages,
                 textMessage: textMessage,
                 teacherName: teacherName,
                 teacherImageUrl: teacherImageUrl,
@@ -157,12 +165,15 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           }
           return ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            // physics: AlwaysScrollableScrollPhysics(),
             itemCount: messagesWidgets.length,
             itemBuilder: (context, int) {
-              //for displaying OnScreen Notification
-              _showNotifications(
-                  sender: messagesWidgets.first.teacherName,
-                  message: messagesWidgets.first.textMessage);
+              ///for displaying OnScreen Notification
+              ///notification functionality
+              // _showNotifications(
+              //     sender: messagesWidgets.first.teacherName,
+              //     message: messagesWidgets.first.textMessage);
               return messagesWidgets[int];
             },
           );
@@ -172,13 +183,15 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   }
 }
 
+
 class MessageCard extends StatelessWidget {
-  MessageCard({this.textMessage, this.teacherName, this.teacherImageUrl, this.deleteMsg});
+  MessageCard({this.textMessage, this.teacherName, this.teacherImageUrl, this.deleteMsg,@required this.canSendMsg});
 
   final String teacherName;
   final String teacherImageUrl;
   final String textMessage;
   final Function deleteMsg;
+  final bool canSendMsg;
 
   final List<String> monthsList = [
     'Jan',
@@ -195,18 +208,20 @@ class MessageCard extends StatelessWidget {
     'Dec'
   ];
 
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-          left: 3.57*SizeConfig.widthMultiplier,
-          right: 3.57*SizeConfig.widthMultiplier,
-          top: 1.96*SizeConfig.heightMultiplier),
+          left: (3.57*SizeConfig.widthMultiplier).roundToDouble(),
+          right: (3.57*SizeConfig.widthMultiplier).roundToDouble(),
+          top: (1.96*SizeConfig.heightMultiplier).roundToDouble()),
       padding: EdgeInsets.symmetric(
-          horizontal: 3.57*SizeConfig.widthMultiplier,
-          vertical: 1.96*SizeConfig.heightMultiplier),
+          horizontal: (3.57*SizeConfig.widthMultiplier).roundToDouble(),
+          vertical: (1.96*SizeConfig.heightMultiplier).roundToDouble()),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(1.53*SizeConfig.widthMultiplier),
+        borderRadius: BorderRadius.circular((1.53*SizeConfig.widthMultiplier).roundToDouble()),
         color: CupertinoTheme.of(context).barBackgroundColor,
       ),
       child: Column(
@@ -220,25 +235,26 @@ class MessageCard extends StatelessWidget {
                   CircleAvatar(
                     backgroundImage: NetworkImage(teacherImageUrl),
                   ),
-                  SizedBox(width: 2.55*SizeConfig.widthMultiplier),
+                  SizedBox(width: (2.55*SizeConfig.widthMultiplier).roundToDouble()),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(teacherName),
                       Text(
-                          '${DateTime.now().day} ${monthsList[DateTime.now().month]}'),
+                          '${DateTime.now().day} ${monthsList[(DateTime.now().month)-1]}'),
                     ],
                   )
                 ],
               ),
+              !canSendMsg?
+                  Container():
               CupertinoButton(
                 onPressed: deleteMsg,
-                // child: Text('Delete', style: TextStyle(color: CupertinoTheme.of(context).primaryColor, fontSize: 14),),
                 child: Icon(CupertinoIcons.delete, color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color,),
               )
             ],
           ),
-          SizedBox(height: 4.9*SizeConfig.heightMultiplier),
+          SizedBox(height: (4.9*SizeConfig.heightMultiplier).roundToDouble()),
           Container(
             child: Text(
               textMessage,

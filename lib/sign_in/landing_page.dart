@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:attendo/main.dart';
 
+//MediaQuery r2d
+
 class LandingPage extends StatefulWidget {
 
   @override

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-//MQD
+//MQD r2d
 ///this is HomeScreen, which is shown after user logs in;
 ///contained 3TABS at bottom
 class HomePage extends StatefulWidget {
@@ -77,17 +77,13 @@ class _HomePageState extends State<HomePage>
           items: [
             ///this is where we are setting aur bottom ICONS
             BottomNavigationBarItem(
-                label: 'AddClass',
+                label: 'Created',
                 icon: Icon(CupertinoIcons.add_circled_solid)),
-            // BottomNavigationBarItem(
-            //     label: 'Alerts',
-            //     icon: Icon(CupertinoIcons.bell_solid)),
             BottomNavigationBarItem(
-                label: 'Joined', icon: Icon(CupertinoIcons.xmark_circle_fill)),
+                label: 'Joined', icon: Icon(CupertinoIcons.person_add_solid)),
             BottomNavigationBarItem(
-                label: 'Profile', icon: Icon(CupertinoIcons.person_solid)),
+                label: 'Profile', icon: Icon(CupertinoIcons.profile_circled)),
           ],
-          // currentIndex: pageIndex,
         ),
         tabBuilder: (
           context,

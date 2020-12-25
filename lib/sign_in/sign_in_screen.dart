@@ -9,12 +9,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-///this Page is not used anywhere as of now,
+//MediaQuery r2d
+
 ///Working on new sign in functionality in this page
 // ignore: must_be_immutable
 class SignInPage extends StatefulWidget {
   SignInPage({this.isThemeLight});
   final bool isThemeLight;
+
+
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -26,7 +29,7 @@ class _SignInPageState extends State<SignInPage> {
   ///this is the same user who logged in, but also contains
   ///some more properties
   User user;
-
+  bool isLoading = false;
   ///Implementation of SignInWithGoogle
   _signInWithGoogle() async {
     try {
@@ -70,7 +73,6 @@ class _SignInPageState extends State<SignInPage> {
       'userImageUrl': user.photoURL,
       'userDisplayName': user.displayName,
       'lastLogin': DateTime.now(),
-      'rollNo': null,
     });
 
     print('qwerty:: ${user.email}');
@@ -83,47 +85,66 @@ class _SignInPageState extends State<SignInPage> {
 
   ///method that builds signInScreen
   CupertinoPageScaffold signInScreen(BuildContext context) {
-
-    return CupertinoPageScaffold(
+    return
+      CupertinoPageScaffold(
       child: widget.isThemeLight ? lightThemeLogin() : darkThemeLogin(),
     );
   }
 
+  Container loadingScreen(){
+    return Container(
+      height: (SizeConfig.one_H*30).roundToDouble(),
+      child: Center(
+        child: CupertinoActivityIndicator(),
+      ),
+    );
+  }
+
   Stack darkThemeLogin() {
-    return Stack(children: [
+    return
+      Stack(children: [
+        Container(color: Color(0xFF00005A),),
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
               'assets/images/signIn_dark.jpg',
             ),
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.contain,
           ),
         ),
       ),
       Column(
         children: [
           SizedBox(
-            height: 83.33*SizeConfig.heightMultiplier,
+            height: (83.33*SizeConfig.heightMultiplier).roundToDouble(),
           ),
           GestureDetector(
-            onTap: _signInWithGoogle,
+            onTap: (){
+              _signInWithGoogle();
+              setState(() {
+                isLoading = true;
+              });
+            },
             child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 15.81*SizeConfig.widthMultiplier),
-                padding: EdgeInsets.symmetric(vertical: 0.61*SizeConfig.heightMultiplier),
+                margin: EdgeInsets.symmetric(horizontal: (15.81*SizeConfig.widthMultiplier).roundToDouble()),
+                padding: EdgeInsets.symmetric(vertical: (0.61*SizeConfig.heightMultiplier).roundToDouble()),
                 decoration: BoxDecoration(
                     color: Color(0xFF0000CC),
-                    borderRadius: BorderRadius.circular(0.8*SizeConfig.heightMultiplier)),
-                child: Row(
+                    borderRadius: BorderRadius.circular((0.8*SizeConfig.heightMultiplier).roundToDouble())),
+                child:
+                isLoading?
+                loadingScreen():
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image(
                       image: AssetImage('assets/images/google_sign.png'),
-                      height: 3.67*SizeConfig.heightMultiplier,
-                      width: 7.65*SizeConfig.widthMultiplier,
+                      height: (3.67*SizeConfig.heightMultiplier).roundToDouble(),
+                      width: (7.65*SizeConfig.widthMultiplier).roundToDouble(),
                     ),
                     SizedBox(
-                      width: 2.55*SizeConfig.widthMultiplier,
+                      width: (2.55*SizeConfig.widthMultiplier).roundToDouble(),
                     ),
                     Text(
                       'Continue with Google',
@@ -133,13 +154,19 @@ class _SignInPageState extends State<SignInPage> {
                 ),),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.63*SizeConfig.widthMultiplier, vertical: 0.49*SizeConfig.heightMultiplier),
-            margin: EdgeInsets.only(left: 5.1*SizeConfig.widthMultiplier, right: 5.1*SizeConfig.widthMultiplier, top: 4.9*SizeConfig.heightMultiplier),
+            padding: EdgeInsets.symmetric(
+                horizontal: (6.63*SizeConfig.widthMultiplier).roundToDouble(),
+                vertical: (0.49*SizeConfig.heightMultiplier).roundToDouble()),
+            margin: EdgeInsets.only(
+                left: (5.1*SizeConfig.widthMultiplier).roundToDouble(),
+                right: (5.1*SizeConfig.widthMultiplier).roundToDouble(),
+                top: (4.9*SizeConfig.heightMultiplier).roundToDouble()),
             child: Center(
               child: Text(
                 "By continuing you agree Okays's Terms of services & Privacy Policy.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: CupertinoColors.white, fontSize: 1.47*SizeConfig.textMultiplier),
+                style: TextStyle(color: CupertinoColors.white,
+                    fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble()),
               ),
             ),
           )
@@ -149,42 +176,52 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Stack lightThemeLogin() {
-    return Stack(children: [
+    return
+      Stack(children: [
+        Container(color: Color(0xFF466EB6),),
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
               'assets/images/signIn_light.jpg',
             ),
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.contain,
           ),
         ),
       ),
       Column(
         children: [
           SizedBox(
-            height: 83.33*SizeConfig.heightMultiplier,
+            height: (83.33*SizeConfig.heightMultiplier).roundToDouble(),
           ),
           GestureDetector(
-            onTap: _signInWithGoogle,
+            onTap: (){
+             _signInWithGoogle();
+              setState(() {
+              isLoading = true;
+              });
+            },
             child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 15.81*SizeConfig.widthMultiplier),
-                padding: EdgeInsets.symmetric(vertical: 0.61*SizeConfig.heightMultiplier),
+                margin: EdgeInsets.symmetric(horizontal:( 15.81*SizeConfig.widthMultiplier).roundToDouble()),
+                padding: EdgeInsets.symmetric(vertical: (0.61*SizeConfig.heightMultiplier).roundToDouble()),
                 decoration: BoxDecoration(
                   // color: CupertinoColors.systemBlue,
-                  color: Color(0xFF13375B),
-                  borderRadius: BorderRadius.circular(0.8*SizeConfig.heightMultiplier),
+                  color: CupertinoColors.activeBlue,
+                  borderRadius: BorderRadius.circular((0.8*SizeConfig.heightMultiplier).roundToDouble()),
                 ),
-                child: Row(
+                child:
+                isLoading?
+                loadingScreen():
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image(
                       image: AssetImage('assets/images/google_sign.png'),
-                      height: 3.67*SizeConfig.heightMultiplier,
-                      width: 7.65*SizeConfig.widthMultiplier,
+                      height: (3.67*SizeConfig.heightMultiplier).roundToDouble(),
+                      width: (7.65*SizeConfig.widthMultiplier).roundToDouble(),
                     ),
                     SizedBox(
-                      width: 2.55*SizeConfig.widthMultiplier,
+                      width: (2.55*SizeConfig.widthMultiplier).roundToDouble(),
                     ),
                     Text(
                       'Continue with Google',
@@ -194,13 +231,18 @@ class _SignInPageState extends State<SignInPage> {
                 )),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.63*SizeConfig.widthMultiplier, vertical: 0.49*SizeConfig.heightMultiplier),
-            margin: EdgeInsets.only(left: 5.1*SizeConfig.widthMultiplier, right: 5.1*SizeConfig.widthMultiplier, top: 4.9*SizeConfig.heightMultiplier),
+            padding: EdgeInsets.symmetric(
+                horizontal: (6.63*SizeConfig.widthMultiplier).roundToDouble(),
+                vertical: (0.49*SizeConfig.heightMultiplier).roundToDouble()),
+            margin: EdgeInsets.only(left: (5.1*SizeConfig.widthMultiplier).roundToDouble(),
+                right: (5.1*SizeConfig.widthMultiplier).roundToDouble(),
+                top: (4.9*SizeConfig.heightMultiplier).roundToDouble()),
             child: Center(
               child: Text(
                 "By continuing you agree Okays's Terms of services & Privacy Policy.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: CupertinoColors.white, fontSize: 1.47*SizeConfig.textMultiplier),
+                style: TextStyle(color: CupertinoColors.white,
+                    fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble()),
               ),
             ),
           )

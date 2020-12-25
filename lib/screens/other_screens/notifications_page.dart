@@ -5,6 +5,7 @@ import 'package:attendo/screens/particular_course_pages/add_message_screen.dart'
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+///NOWHERE USED [DO NOT DELETE]
 ///notification page will be taken care later
 ///AS OF NOW I AM leaving it pending
 ///

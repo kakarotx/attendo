@@ -1,13 +1,13 @@
 import 'package:attendo/modals/size_config.dart';
 import 'package:attendo/screens/other_screens/developers.dart';
-import 'package:attendo/screens/other_screens/help_dart.dart';
-import 'package:attendo/screens/particular_course_pages/set_roll_no.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+//Media Query r2d
 final userRef = FirebaseFirestore.instance.collection('users');
 
 class UserProfile extends StatefulWidget {
@@ -65,6 +65,17 @@ class _UserProfileState extends State<UserProfile> {
         });
   }
 
+  ///called at: Show app demo
+  ///and will take user to a youtube video
+  _launchURL() async {
+    const url = 'https://www.youtube.com/watch?v=s9TQIiq9fF0';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,112 +97,59 @@ class _UserProfileState extends State<UserProfile> {
 
   ///here we are displaying List of all different options under setting
   listOfOptions(){
-    return(
-        ListView(
-          children: [
-            StreamBuilder(
-              stream: userRef.doc(widget.user.uid).snapshots(),
-              builder: (context, snapshot){
-                if(!snapshot.hasData){
-                  return CupertinoActivityIndicator();
-                } else
-                  {
-                    final rollNo = snapshot.data['rollNo'];
-                    return EditProfileCard(user: widget.user,rollNo:rollNo,);
-                  }
-              },
-            ),
-            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
-            GestureDetector(
-              // padding: EdgeInsets.zero,
-              child: CupertinoTile(
-                // addPadding: false,
-                title: 'Add RollNo. (if student)',
-                trailingWidget: Icon(CupertinoIcons.forward),
+    return
+      SafeArea(
+      child: (
+          Column(
+            children: [
+              ProfileCard(user: widget.user),
+              Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
+              CupertinoButton(
+                padding: EdgeInsets.only(left: (SizeConfig.one_W*10).roundToDouble()),
+                onPressed: widget.toggleTheme,
+                child: CupertinoTile(
+                  title: 'Switch Theme',
+                ),
               ),
-              onTap: (){
-                print('opening editing page');
-                Navigator.push(context, CupertinoPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context)=>SetRollNoPage(user: widget.user,)
-                ));
-                // setAttendenceDialog();
-              },
-            ),
-            Divider(height: 0.03*SizeConfig.heightMultiplier,color: CupertinoColors.inactiveGray,),
-            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
-            GestureDetector(
-              onTap: widget.toggleTheme,
-              child: CupertinoTile(
-                title: 'Switch Theme',
-                trailingWidget: Icon(CupertinoIcons.forward),
+              Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
+              CupertinoButton(
+                padding: EdgeInsets.only(left: (SizeConfig.one_W*10).roundToDouble()),              // padding: EdgeInsets.zero,
+                child: CupertinoTile(
+                  title: 'Show app demo',
+                ),
+                onPressed: (){
+                  print('taking to youtube page');
+                  //TODO: take to Youtube Video
+                  _launchURL();
+                },
               ),
-            ),
-            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
-            GestureDetector(
-              // padding: EdgeInsets.zero,
-              child: CupertinoTile(
-                // addPadding: false,
-                title: 'Help',
-                trailingWidget: Icon(CupertinoIcons.forward),
+              Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
+              CupertinoButton(
+                padding: EdgeInsets.only(left: (SizeConfig.one_W*10).roundToDouble()),
+                child: CupertinoTile(
+                  title: 'About us',
+                ),
+                onPressed: (){
+                  print('Showing About us screen');
+                  Navigator.push(context, CupertinoPageRoute(builder: (context)=>DevelopersPage(),
+                     ),);
+                },
               ),
-              onTap: (){
-                print('Help');
-                Navigator.push(context, CupertinoPageRoute(builder: (context)=>HelpPage(),),);
-              },
-            ),
-            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
-            GestureDetector(
-              // padding: EdgeInsets.zero,
-              child: CupertinoTile(
-                // addPadding: false,
-                title: 'About us',
-                trailingWidget: Icon(CupertinoIcons.forward),
+              Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
+              CupertinoButton(
+                padding: EdgeInsets.only(left: (SizeConfig.one_W*10).roundToDouble()),
+                child: CupertinoTile(
+                  title: 'Log out',
+                ),
+                onPressed: (){
+                  confirmDeleteAlert(context);
+                },
               ),
-              onTap: (){
-                print('Showing About us screen');
-                Navigator.push(context, CupertinoPageRoute(builder: (context)=>DevelopersPage(),
-                   ),);
-              },
-            ),
-            Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
-          ],
-        )
-    );
-  }
-
-
-  //not used anywhere DO NOT DELETE
-  setAttendenceDialog(){
-    Navigator.of(context).push(
-      PageRouteBuilder(
-          pageBuilder: (context, _, __) => CupertinoAlertDialog(
-            // title: Text("Note"),
-            content: CupertinoTextField(
-              placeholder: 'Roll No/Enrollment No.',
-              onChanged: (value){
-                enteredRollNumber=value;
-              },
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                  onPressed: () {
-                    updateData();
-                    Navigator.pop(context);
-                  },
-                  child: Text("Set")),
-
-              CupertinoDialogAction(
-                  onPressed: () {
-                    updateData();
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel",style: TextStyle(color: CupertinoColors.destructiveRed),)),
+              Divider(height: (0.122*SizeConfig.heightMultiplier).roundToDouble(),color: CupertinoColors.inactiveGray,),
             ],
-          ),
-          opaque: false),
+          )
+      ),
     );
-
   }
 
 }
@@ -201,11 +159,10 @@ class _UserProfileState extends State<UserProfile> {
 ///
 ///
 ///edit Profile Card
-class EditProfileCard extends StatelessWidget {
-  EditProfileCard({
-    this.user,this.rollNo
+class ProfileCard extends StatelessWidget {
+  ProfileCard({
+    this.user,
   });
-  final String rollNo;
   final User user;
 
   @override
@@ -230,13 +187,6 @@ class EditProfileCard extends StatelessWidget {
           ),
           SizedBox(height: (0.24*SizeConfig.heightMultiplier).roundToDouble(),),
           Text(user.email, style: TextStyle(fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble(),),),
-          SizedBox(
-            height: 0.24*SizeConfig.heightMultiplier,
-          ),
-          rollNo==null?Container():Text(
-            'Roll No: $rollNo',
-            style: TextStyle(fontSize: (1.47*SizeConfig.textMultiplier).roundToDouble()),
-          ),
         ],
       ),
       decoration: BoxDecoration(
@@ -248,34 +198,25 @@ class EditProfileCard extends StatelessWidget {
 
 class CupertinoTile extends StatelessWidget {
   CupertinoTile({
-    this.title,this.iconData, this.trailingWidget,this.addPadding=true
+    this.title,
   });
 
   final String title;
-  final IconData iconData;
-  final Widget trailingWidget;
-  final bool addPadding;
+
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: addPadding? EdgeInsets.only(
-          top: (0.73*SizeConfig.heightMultiplier).roundToDouble(),
-          bottom: (0.73*SizeConfig.heightMultiplier).roundToDouble(),
-          left: (2.55*SizeConfig.widthMultiplier).roundToDouble()):
-      EdgeInsets.only(left:  (2.55*SizeConfig.widthMultiplier).roundToDouble()),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-                ),
-          ),
-          trailingWidget
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color
+              ),
+        ),
+        Icon(CupertinoIcons.forward)
+      ],
     );
   }
 }

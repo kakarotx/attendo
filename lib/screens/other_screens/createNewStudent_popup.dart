@@ -4,9 +4,11 @@ import 'package:attendo/modals/size_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-//MQD
+//MediaQuery r2d
 final coursesRef = FirebaseFirestore.instance.collection('coursesDetails');
 final userRef = FirebaseFirestore.instance.collection('users');
 
@@ -22,8 +24,8 @@ class CreateNewStudentPage extends StatefulWidget {
 
 class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
   //variables to create a new Course
-  // String studentPhotoUrl='https://www.thewodge.com/wp-content/uploads/2019/11/avatar-icon.png';
-  String studentPhotoUrl = 'https://cdn.pixabay.com/photo/2016/03/31/14/47/avatar-1292817_1280.png';
+
+  String studentPhotoUrl = 'https://i.ibb.co/bBrjWHm/avatar.jpg';
   String studentUid;
   String studentName;
 
@@ -53,18 +55,6 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
       'studentId': studentUid,
     });
 
-    // userRef
-    //     .doc(widget.currentUser.uid.toString())
-    //     .collection('createdCoursesByUser')
-    //     .doc(courseCode)
-    //     .set({
-    //   "courseName": nameOfCourse,
-    //   'courseCode': codeOfCourse,
-    //   'createdBy': widget.currentUser.displayName,
-    //   'imagePath': imagePath,
-    //   'yearOfBatch': year,
-    //   'teacherImageUrl': widget.currentUser.photoURL
-    // });
   }
 
   @override
@@ -82,13 +72,35 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
 
                 if (studentName != null) {
 
-                  Navigator.pop(context);
+                  try{
+                    Navigator.pop(context);
+                    uploadCourseDataToCloud(
+                        emailId: 'null@gmail.com',
+                        studentName: studentName,
+                        studentPhotoUrl: studentPhotoUrl
+                    );
+                    increaseStudentNumber();
 
-                  uploadCourseDataToCloud(
-                  emailId: 'null@gmail.com',
-                  studentName: studentName,
-                  studentPhotoUrl: studentPhotoUrl
-                  );
+                    //Showing toast
+                    Fluttertoast.showToast(
+                        msg: "New student added",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: CupertinoColors.activeBlue,
+                        textColor: CupertinoColors.white,
+                        fontSize: 16.0
+                    );
+
+                  } catch(e){
+                    Fluttertoast.showToast(
+                        msg: "Unexpected Error, try again",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: CupertinoColors.activeBlue,
+                        textColor: CupertinoColors.white,
+                        fontSize: 16.0
+                    );
+                  }
                 } else{
                   showNoticeDialog();
                 }
@@ -96,46 +108,42 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
             ),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(
-                vertical: (6.12*SizeConfig.heightMultiplier).roundToDouble(),//50
-                horizontal: (6.37*SizeConfig.widthMultiplier).roundToDouble(),//25
+            padding: EdgeInsets.only(
+              top: (1.96 * SizeConfig.heightMultiplier).roundToDouble(),
+              bottom: (6.12 * SizeConfig.heightMultiplier).roundToDouble(),
+              left: (6.37 * SizeConfig.widthMultiplier).roundToDouble(),
+              right: (6.37 * SizeConfig.widthMultiplier).roundToDouble(),
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(
-                    (5.1*SizeConfig.widthMultiplier).roundToDouble()
+                    (SizeConfig.one_W*20).roundToDouble()
                 ),//20
                 topRight: Radius.circular(
-                    (5.1*SizeConfig.widthMultiplier).roundToDouble()
+                    (SizeConfig.one_W*20).roundToDouble()
                 ),//20
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: (4.9*SizeConfig.heightMultiplier).roundToDouble(),//40
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      'StudentName  : ',
-                    ),
-                    Expanded(
-                      child: CupertinoTextField(
-                        placeholder: 'Enter Student Name',
-                        onChanged: (String newValue) {
-                          return studentName = newValue;
-                        },
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+                Text(
+                  'New StudentName',
                 ),
                 SizedBox(
-                  height: (1.96*SizeConfig.heightMultiplier).roundToDouble(),//16
+                  height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
+                ),
+                Expanded(
+                  child: CupertinoTextField(
+                    placeholder: 'Enter Student Name',
+                    onChanged: (String newValue) {
+                      return studentName = newValue;
+                    },
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  height: (SizeConfig.one_H*16).roundToDouble()//16
                 ),
                 Container(
                   child: Column(
@@ -146,21 +154,29 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                         style: TextStyle(color: CupertinoColors.destructiveRed),
                       ),
                       SizedBox(
-                        height:(0.49*SizeConfig.heightMultiplier).roundToDouble(),
+                        height:(SizeConfig.one_H*4).roundToDouble(),
                       ),
                       Text(
                           '1. You can also add student manually.'),
                       SizedBox(
-                        height:(1.22*SizeConfig.heightMultiplier).roundToDouble() ,//10
+                        height:(SizeConfig.one_H*10).roundToDouble(),//10
                       ),
                       Text(
-                          "2. This helps to have you record of students who doesnot have phone"),
+                          "2. This helps to have you record of students who don't have phone"),
                     ],
                   ),
                 )
               ],
             ),
           )
+    );
+  }
+
+  increaseStudentNumber() async{
+    coursesRef.doc(widget.course.courseCode).update(
+      {
+        "totalStudents": FieldValue.increment(1)
+      }
     );
   }
 

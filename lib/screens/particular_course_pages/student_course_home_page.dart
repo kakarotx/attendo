@@ -1,11 +1,16 @@
 import 'package:attendo/home_page.dart';
 import 'package:attendo/modals/course_class.dart';
+import 'package:attendo/modals/size_config.dart';
 import 'package:attendo/screens/attendence_screens/attendence_record.dart';
 import 'package:attendo/screens/particular_course_pages/add_message_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share/share.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+
+//Media Query r2d
 
 final courseRef = FirebaseFirestore.instance.collection('coursesDetails');
 final deletedCoursesRef = FirebaseFirestore.instance.collection('deletedCourses');
@@ -52,11 +57,11 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
 
   @override
   Widget build(BuildContext context) {
-    final segmentedControlMaxWidth = 600.0;
+    final segmentedControlMaxWidth = (SizeConfig.one_W*600.0).roundToDouble();
 
     //this list contains the Body of the segments
     final children = <int, Widget>{
-      0: AttendenceRecordPage(),
+      0: AttendenceRecordPage(course: widget.course,user: widget.user,),
 
       ///this 1: will take LIST OF STUDENTS
       ///as of now it is ok
@@ -66,7 +71,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
     //Headlines of CupertinoSegmentedControl
     final headingChildren = <int, Widget>{
       0: Text('AttendenceRecord'),
-      1: Text('Remainders'),
+      1: Text('Messages'),
     };
 
     return CupertinoPageScaffold(
@@ -74,7 +79,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.course.courseName.toUpperCase()),
         trailing: CupertinoButton(
-            padding: EdgeInsets.only(bottom: 4),
+            padding: EdgeInsets.only(bottom: (SizeConfig.one_H*4).roundToDouble()),
             onPressed: () {
               showCupertinoModalPopup(
                 context: context,
@@ -89,13 +94,13 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
         style: CupertinoTheme.of(context)
             .textTheme
             .textStyle
-            .copyWith(fontSize: 13),
+            .copyWith(fontSize: (SizeConfig.one_W*13).roundToDouble()),
         child: SafeArea(
           child: ListView(
             children: [
               isCourseDeletedByTeacher?
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: (SizeConfig.one_H*10).roundToDouble()),
                 child: Center(
                   child: Text(
                     'This course is deleted by $deletedClassMsg.',
@@ -104,7 +109,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
                   ),
                 ),
               ):Container(),
-              const SizedBox(height: 16),
+              SizedBox(height: (SizeConfig.one_H*16).roundToDouble()),
               SizedBox(
                 width: segmentedControlMaxWidth,
                 child: CupertinoSegmentedControl<int>(
@@ -114,10 +119,10 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: (SizeConfig.one_H*20).roundToDouble(),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 2),
+                padding: EdgeInsets.symmetric(horizontal: (SizeConfig.one_W*2).roundToDouble()),
                 child: children[currentSegment],
               ),
             ],
@@ -126,7 +131,6 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
       ),
     );
   }
-
 
   _shareClass(BuildContext context){
     final RenderBox box = context.findRenderObject();
@@ -140,7 +144,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
   ///action sheet
   myActionSheet(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 14),
+      margin: EdgeInsets.symmetric(horizontal: (SizeConfig.one_W*14).roundToDouble()),
       child: CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
@@ -181,7 +185,6 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
             content: Text("Do you want to leave the Course?"),
             actions: <Widget>[
               CupertinoDialogAction(
-                // isDefaultAction: true,
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -191,7 +194,29 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
                   // isDefaultAction: true,
                   onPressed: () {
                     Navigator.pop(context);
-                    deleteTheCourseFromCLoud();
+                    try{
+                      deleteTheCourseFromCLoud();
+                      decreaseOneStudent();
+
+                      Fluttertoast.showToast(
+                          msg: "You leaved class",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: CupertinoTheme.of(context).primaryColor,
+                          textColor: CupertinoColors.white,
+                          fontSize: 16.0
+                      );
+
+                    } catch(e){
+                      Fluttertoast.showToast(
+                          msg: "Unexpected Error, try again",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: CupertinoTheme.of(context).primaryColor,
+                          textColor: CupertinoColors.white,
+                          fontSize: 16.0
+                      );
+                    }
                     Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context)=>HomePage()), (route) => false);
 
                   },
@@ -200,4 +225,15 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
           );
         });
   }
+  void decreaseOneStudent() {
+    courseRef
+        .doc(widget.course.courseCode)
+        .collection('studentsEnrolled')
+        .doc(widget.user.uid)
+        .update({"totalStudents": FieldValue.increment(-1)});
+  }
+
 }
+
+
+

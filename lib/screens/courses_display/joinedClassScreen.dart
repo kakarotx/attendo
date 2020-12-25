@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+//MediaQuery r2d
+
 ///this screen displays all the classes joined by you
 // final _fireStore = FirebaseFirestore.instance;
 

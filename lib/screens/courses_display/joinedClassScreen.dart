@@ -31,7 +31,7 @@ class _JoinedClassScreenState extends State<JoinedClassScreen> {
           headerSliverBuilder: (context, bool innerBoxIsScrolled) {
             return [
               CupertinoSliverNavigationBar(
-                largeTitle: Text('Enrolled'),
+                largeTitle: Text('Joined'),
                 trailing: CupertinoButton(
                   padding: EdgeInsets.zero,
                   onPressed: () {

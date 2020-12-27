@@ -65,7 +65,7 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
       currentSegment = newValue;
     });
   }
-
+  int noOfStudents = 0;
   final pdf = pw.Document();
 
   //data for pdf
@@ -350,6 +350,7 @@ physics: NeverScrollableScrollPhysics(),
             print("QQQQQQQQQ::::::   ${studentlist.length}");
             Navigator.push(context, CupertinoPageRoute(builder: (context) {
               return TakeAttendencePage(
+                noOfStudents: noOfStudents,
                 user: widget.user,
                 course: widget.course,list: studentlist,
               );
@@ -380,6 +381,7 @@ physics: NeverScrollableScrollPhysics(),
         print('QQQQQQQQQQ:::  entered for loop');
         final studentName = student.data()['studentName'];
         final studentId = student.data()['studentId'];
+        noOfStudents = student.data()['totalStudents'];
         studentlist.add(
           StudentsForAttendanceCard(
               name: studentName, sid: studentId, status: false),

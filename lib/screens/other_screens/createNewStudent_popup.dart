@@ -84,7 +84,7 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                     //Showing toast
                     Fluttertoast.showToast(
                         msg: "New student added",
-                        toastLength: Toast.LENGTH_LONG,
+                        toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                         backgroundColor: CupertinoColors.activeBlue,
                         textColor: CupertinoColors.white,

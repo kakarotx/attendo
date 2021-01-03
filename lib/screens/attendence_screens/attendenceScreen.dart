@@ -36,7 +36,7 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('sssssssssssssss ${newList.length}');
+    // print('sssssssssssssss ${newList.length}');
   }
 
   @override
@@ -54,13 +54,6 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
         // backgroundColor: CupertinoColors.extraLightBackgroundGray,
         navigationBar: CupertinoNavigationBar(
           middle: Text('Attendance Page'),
-          // trailing: CupertinoButton(
-          //   padding: EdgeInsets.zero,
-          //   child: Text("Upload"),
-          //   onPressed: () {
-          //     _onUpdateButtonPressed(widget.course, dummyList, context);
-          //   },
-          // ),
         ),
         child: buildStudentsCards(context));
   }
@@ -73,7 +66,7 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
             key: UniqueKey(),
             // child: Text('Dismiss Me'),
             onDismissed: (DismissDirection direction) {
-              print('WWWWWWWWW::  dismissed');
+              // print('WWWWWWWWW::  dismissed');
 
               if (direction == DismissDirection.endToStart) {
                 // print("left");
@@ -122,16 +115,29 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
   //what to return on Attendance screen
   Widget whatToReturn(){
     if(widget.noOfStudents==0){
-      return Container(
-        child: Center(
-          child: Text("CURRENTLY THERE IS NO STUDENT, SWIPE-ABLE CARDS OF STUDENTS WILL BE SHOWN HERE."),
-        ),
-      );
+      return zeroStudentView();
     } else if((newList.length)==0){
      return updateSwipe();
     } else{
       return attendanceListOfSwipeableCards(context);
     }
+  }
+
+  final String ZERO_STUDENT_TEXT = 'NOTE :  Swipe-able cards with student name on it will be shown here. You can swipe them right and left to mark present and absent respectively.';
+
+  zeroStudentView(){
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('assets/images/zerostudent.png',),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: (SizeConfig.one_H*30).roundToDouble()),
+              child: Text(ZERO_STUDENT_TEXT,
+              style: TextStyle(color: CupertinoColors.activeBlue),)),
+        ],
+      )
+    );
   }
 
   Expanded attendanceListOfSwipeableCards(BuildContext context){
@@ -149,16 +155,16 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
             // what to do after an item has been swiped away.
             onDismissed: (DismissDirection dir) {
               count++;
-              print("COUNTTTTTTTT:: $count");
+              // print("COUNTTTTTTTT:: $count");
               if (dir == DismissDirection.endToStart) {
-                print("left");
+                // print("left");
                 widget.list[index].status = false;
-                print(widget.list[index].status);
+                // print(widget.list[index].status);
                 //markabsent(widget.course, widget.list[index].sid);
               } else {
-                print("right");
+                // print("right");
                 widget.list[index].status = true;
-                print(widget.list[index].status);
+                // print(widget.list[index].status);
                 //markpresent(widget.course, widget.list[index].sid);
               }
               //TODO: Then show a snackbar.
@@ -257,15 +263,15 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
   }
 
   _onUpdateButtonPressed(Course course, List list, BuildContext context) {
-    print("WWWWWWWWW::  onUpdateBtn Pressed");
-    print("WWWWWWWWW::  lengthOF List = ${dummyList.length}");
+    // print("WWWWWWWWW::  onUpdateBtn Pressed");
+    // print("WWWWWWWWW::  lengthOF List = ${dummyList.length}");
 
     if (newList.length == 0) {
-      print("WWWWWWWWW::  entering IF condition");
-      print("WWWWWWWWW::  lengthOF List = ${dummyList.length}");
+      // print("WWWWWWWWW::  entering IF condition");
+      // print("WWWWWWWWW::  lengthOF List = ${dummyList.length}");
       for (var indx = 0; indx < list.length; indx++) {
 
-        print("WWWWWWWWW::  entering FOR LOOP FOR $indx time");
+        // print("WWWWWWWWW::  entering FOR LOOP FOR $indx time");
 
         increaseTotalClassForEachStudent(course, list[indx].sid);
         if (list[indx].status == true) {
@@ -305,7 +311,7 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
   }
 
   markpresent(Course course, String id) {
-    print('sourabhid---------------- $id');
+    // print('sourabhid---------------- $id');
     courseRef
         .doc(course.courseCode)
         .collection('studentsEnrolled')
@@ -319,7 +325,7 @@ class _TakeAttendencePageState extends State<TakeAttendencePage> {
   }
 
   markabsent(Course course, String id) {
-    print('sourabhid---------------- $id');
+    // print('sourabhid---------------- $id');
     courseRef
         .doc(course.courseCode)
         .collection('studentsEnrolled')

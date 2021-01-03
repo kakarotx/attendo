@@ -171,7 +171,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
                       ),
                       Text(
                           "2. A Code for your class will be provided to you which you can share"
-                          " with your class so they can join."),
+                          " with your class so Students can join, you can also add students manually"),
                     ],
                   ),
                 )
@@ -226,7 +226,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
     else {
       ///
       ///
-      print('creating new class...');
+      /// print('creating new class...');
 
       ///here many things are happening
       ///1. gerating a random int to select a Image for card
@@ -267,7 +267,7 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
           Fluttertoast.showToast(
               msg: "Unexpected Error, try again",
-              toastLength: Toast.LENGTH_SHORT,
+              toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: CupertinoTheme.of(context).primaryColor,
               textColor: CupertinoColors.white,
@@ -276,7 +276,6 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
         }
 
-
       } else{
         showNoticeDialog();
       }
@@ -284,43 +283,5 @@ class _CreateNewClassState extends State<CreateNewClass> {
 
   }
 
-
-
-
 }
 
-///DANGER AHEAD-
-///
-//TODO: create a non repeating random number function
-//outside of class
-//failed attempt to create a RandomGenerator
-//TODO: make RANDOM_NUMBER_GENERATOR work
-// int generatedRandomInt() {
-//   int permanentRandomInt;
-//   int tempRandomInt;
-//
-//
-//   //this will run after we create our second card
-//   if (randomIntList.length == 0) {
-//     tempRandomInt = 0 + Random().nextInt(3 - 0);
-//     permanentRandomInt = tempRandomInt;
-//     print('randomInt: $permanentRandomInt');
-//     randomIntList.add(permanentRandomInt);
-//   }
-//   else {
-//     tempRandomInt = 0 + Random().nextInt(3 - 0);
-//     permanentRandomInt = tempRandomInt;
-//     print('randomInt: $permanentRandomInt');
-//     randomIntList.add(permanentRandomInt);
-//     while (randomIntList[randomIntList.last] == randomIntList[randomIntList.length - 2]) {
-//       tempRandomInt = 0 + Random().nextInt(3 - 0);
-//       permanentRandomInt = tempRandomInt;
-//       print('randomInt: $permanentRandomInt');
-//       randomIntList.add(permanentRandomInt);
-//       // print(randomIntList.length);
-//     }
-//
-//   }
-//   return randomIntList.last;
-//
-// }

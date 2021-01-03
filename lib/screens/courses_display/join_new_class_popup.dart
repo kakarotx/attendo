@@ -49,9 +49,9 @@ class _JoinNewState extends State<JoinNew> {
           imagePath = courseData.data()['imagePath'];
           teacherName = courseData.data()['createdBy'];
           teacherImageUrl = courseData.data()['teacherImageUrl'];
-          print('this is $courseName');
+          // print('this is $courseName');
         } catch (e) {
-          print('qwerty error::::$e');
+          // print('qwerty error::::$e');
         }
       }
     } else {}
@@ -104,6 +104,11 @@ class _JoinNewState extends State<JoinNew> {
         "absent": 0,
         "present": 0,
         'totalClasses': _totalClassesTillNow
+      });
+
+      ///totalStudent++
+      courseRef.doc(courseCode).update({
+        'totalStudents': FieldValue.increment(1)
       });
     }
   }
@@ -177,12 +182,15 @@ class _JoinNewState extends State<JoinNew> {
   }
 
   _onJoinButtonPressed() async {
+
+
     //checking if the class is created by same user so that he/she can't join their own class
     final usersData = await userRef
         .doc(widget.user.uid)
         .collection('createdCoursesByUser')
         .doc(enteredClassCode)
         .get();
+
     final bool isClassCreatedByTheSameUser = usersData.exists;
 
     if (enteredClassCode != null) {
@@ -223,7 +231,7 @@ class _JoinNewState extends State<JoinNew> {
                 textColor: CupertinoColors.white,
                 fontSize: 16.0);
           }
-          print('joining new course');
+          // print('joining new course');
 
           ///the provider part that was here is commented below, OUTSIDE THE CLASS
 

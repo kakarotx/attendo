@@ -30,19 +30,19 @@ class _StudentsListState extends State<StudentsList> {
             return Center(child: CupertinoActivityIndicator());
           } else {
             final students = snapshot.data.docs;
-            print(students);
+            // print(students);
             List<StudentCard> studentCards = [];
             for (var student in students) {
               final emailId = student['emailId'];
-              print(emailId);
+              // print(emailId);
               final studentName = student['studentName'];
               final studentPhotoUrl = student['studentPhotoUrl'];
               final studentId= student['studentId'];
-              final int absent = student['absent'];
+              final int totalClasses = student['totalClasses'];
               final int present = student['present'];
               int presentPercentage;
               try{
-                presentPercentage=(present*100)~/(present+absent);
+                presentPercentage=(present*100)~/totalClasses;
               } catch(e){
                 presentPercentage=0;
               }
@@ -55,14 +55,14 @@ class _StudentsListState extends State<StudentsList> {
                 presentPercentage: presentPercentage,
 
               ));
-              print(studentCards.length);
+              // print(studentCards.length);
             }
             return ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: studentCards.length,
               itemBuilder: (context, int) {
-                print('building');
+                // print('building');
                 return studentCards[int];
               },
             );
@@ -95,7 +95,7 @@ class _StudentsListState extends State<StudentsList> {
                   fullscreenDialog: true
                 ),
               );
-              print('Adding New Student');
+              // print('Adding New Student');
             },
             child: Text('Add New Student'),
           ),
@@ -174,14 +174,14 @@ class StudentCard extends StatelessWidget {
                   children: [
                     Text(
                       studentName,
-                      style: TextStyle(color: presentPercentage>=40?CupertinoTheme.of(context).primaryContrastingColor:CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
+                      style: TextStyle(color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
                     ),
                     SizedBox(
                       height: (SizeConfig.one_H*3).roundToDouble(),
                     ),
                     Text(
                       studentEmailId,
-                      style: TextStyle(color: presentPercentage>=40?CupertinoTheme.of(context).primaryContrastingColor:CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
+                      style: TextStyle(color: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle.color),
                     ),
                   ],
                 ),

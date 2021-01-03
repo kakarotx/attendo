@@ -16,6 +16,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:attendo/modals/student_for_attendance_scree.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //MediaQueryData r2d
 
@@ -92,14 +93,14 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
         // print(doc.data());
         List<String> oneStudentData = [];
         final studentName = studentData.data()['studentName'];
-        print('student name');
-        print(studentName);
+        // print('student name');
+        // print(studentName);
         final int absent = studentData.data()['absent'];
-        print('absent count');
-        print(absent);
+        // print('absent count');
+        // print(absent);
         final int present = studentData.data()['present'];
 
-        print('add data to list');
+        // print('add data to list');
         oneStudentData.add(studentName);
         oneStudentData.add(present.toString());
         oneStudentData.add(absent.toString());
@@ -115,7 +116,6 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
         listOfData.add(oneStudentData);
       },
     );
-    print(listOfData);
 
     final time = DateTime.now();
     final date = "${time.day}/${time.month}/${time.year}";
@@ -319,8 +319,19 @@ physics: NeverScrollableScrollPhysics(),
     );
   }
 
+  ///called at: Show app demo
+  ///and will take user to a youtube video
+  _launchURL() async {
+    const url = 'https://www.youtube.com/watch?v=s9TQIiq9fF0';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   void learnMoreAboutAttendenceDailog(){
-    final attendanceMsg = "Total Class increase everytime you take attendance, make sure to UPLOAD Attendance after taking Attendance";
+    final attendanceMsg = "Total Classes increase by 1 every-time you take Attendance and update it. Swipe-able cards with student name on it will be displayed after you click TakeAttendance button. For more info watch demo.";
     showCupertinoDialog(
         context: context,
         builder: (context) {
@@ -333,6 +344,12 @@ physics: NeverScrollableScrollPhysics(),
                     Navigator.pop(context);
                   },
                   child: Text("Okays")),
+              CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _launchURL();
+                  },
+                  child: Text("Watch demo")),
             ],
           );
         });
@@ -347,7 +364,7 @@ physics: NeverScrollableScrollPhysics(),
           child: Text('Take Attendence'),
           onPressed: () async{
             await fetchdata();
-            print("QQQQQQQQQ::::::   ${studentlist.length}");
+            // print("QQQQQQQQQ::::::   ${studentlist.length}");
             Navigator.push(context, CupertinoPageRoute(builder: (context) {
               return TakeAttendencePage(
                 noOfStudents: noOfStudents,
@@ -375,10 +392,10 @@ physics: NeverScrollableScrollPhysics(),
           .collection('studentsEnrolled')
           .get();
 
-      print('QQQQQQQQQQQQ::::: ${studentData.docs.length}');
-      print("QQQQQQQQQQQ:::  entering for loop");
+      // print('QQQQQQQQQQQQ::::: ${studentData.docs.length}');
+      // print("QQQQQQQQQQQ:::  entering for loop");
       studentData.docs.forEach((student) {
-        print('QQQQQQQQQQ:::  entered for loop');
+        // print('QQQQQQQQQQ:::  entered for loop');
         final studentName = student.data()['studentName'];
         final studentId = student.data()['studentId'];
         noOfStudents = student.data()['totalStudents'];
@@ -386,11 +403,11 @@ physics: NeverScrollableScrollPhysics(),
           StudentsForAttendanceCard(
               name: studentName, sid: studentId, status: false),
         );
-        print('QQQQQQQQ:::  $studentName');
-        print('QQQQQQQQ:::  ${studentlist.length}');
+        // print('QQQQQQQQ:::  $studentName');
+        // print('QQQQQQQQ:::  ${studentlist.length}');
       }
       );
-      print(studentlist);
+      // print(studentlist);
 
       //getting AppUrl
     final appInfoDoc = await appInfoRef.doc("info").get();
@@ -437,7 +454,7 @@ physics: NeverScrollableScrollPhysics(),
                       child: Text('View AttendenceSheet')),
                   CupertinoActionSheetAction(
                       onPressed: () {
-                        print('sharing');
+                        // print('sharing');
                         _shareClass(context);
                         Navigator.pop(context);
                       },
@@ -535,13 +552,6 @@ physics: NeverScrollableScrollPhysics(),
 
   ///we are the deleting the Course from [CoursesDetails] collection
   void deleteTheCourseFromCloud(Course course) async {
-    courseRef.doc(course.courseCode).delete();
-
-    userRef
-        .doc(widget.user.uid)
-        .collection('createdCoursesByUser')
-        .doc(course.courseCode)
-        .delete();
 
     final studentsEnrolled = await userRef
         .doc(widget.user.uid)
@@ -572,6 +582,14 @@ physics: NeverScrollableScrollPhysics(),
         element.reference.delete();
       }
     });
+
+    courseRef.doc(course.courseCode).delete();
+
+    userRef
+        .doc(widget.user.uid)
+        .collection('createdCoursesByUser')
+        .doc(course.courseCode)
+        .delete();
   }
 
   ///I made a Collection on firebase: [DeletedCourses],

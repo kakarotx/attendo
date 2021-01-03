@@ -149,7 +149,7 @@ class _CourseHomePageForStudentState extends State<CourseHomePageForStudent> {
         actions: [
           CupertinoActionSheetAction(
               onPressed: () {
-                print('sharing');
+                // print('sharing');
                 _shareClass(context);
                 // Navigator.pop(context);
               },

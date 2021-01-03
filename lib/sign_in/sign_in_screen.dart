@@ -45,7 +45,7 @@ class _SignInPageState extends State<SignInPage> {
                 accessToken: googleAuth.accessToken,
                 idToken: googleAuth.idToken),
           );
-          print(authResult.user.email);
+          // print(authResult.user.email);
           user = authResult.user;
           _uploadUserData(user);
           return user;
@@ -59,12 +59,12 @@ class _SignInPageState extends State<SignInPage> {
             code: 'ERROR_ABORTED_BY_USER', message: 'Sign in aborted by User');
       }
     } catch (e) {
-      print('QWERTY:: $e');
+      // print('QWERTY:: $e');
     }
   }
 
   _uploadUserData(User user) {
-    print('qwerty:: called');
+    // print('qwerty:: called');
     final _firestore = FirebaseFirestore.instance;
     final userCollection = _firestore.collection('users');
     userCollection.doc(user.uid.toString()).set({
@@ -75,7 +75,7 @@ class _SignInPageState extends State<SignInPage> {
       'lastLogin': DateTime.now(),
     });
 
-    print('qwerty:: ${user.email}');
+    // print('qwerty:: ${user.email}');
   }
 
   @override

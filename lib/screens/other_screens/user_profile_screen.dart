@@ -31,7 +31,7 @@ class _UserProfileState extends State<UserProfile> {
     });
   }
   void _signOut()async{
-    print('signing out');
+    // print('signing out');
     await FirebaseAuth.instance.signOut();
     GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
@@ -118,7 +118,7 @@ class _UserProfileState extends State<UserProfile> {
                   title: 'Show app demo',
                 ),
                 onPressed: (){
-                  print('taking to youtube page');
+                  // print('taking to youtube page');
                   //TODO: take to Youtube Video
                   _launchURL();
                 },
@@ -130,7 +130,7 @@ class _UserProfileState extends State<UserProfile> {
                   title: 'About us',
                 ),
                 onPressed: (){
-                  print('Showing About us screen');
+                  // print('Showing About us screen');
                   Navigator.push(context, CupertinoPageRoute(builder: (context)=>DevelopersPage(),
                      ),);
                 },

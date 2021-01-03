@@ -35,29 +35,29 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   void initState() {
     super.initState();
     textEditingController = TextEditingController();
-    var androidInitilize = new AndroidInitializationSettings('ic_launcher');
-    var iOSinitilize = new IOSInitializationSettings();
-    var initilizationsSettings =
-        new InitializationSettings(androidInitilize, iOSinitilize);
-    fltrNotification = new FlutterLocalNotificationsPlugin();
-    fltrNotification.initialize(initilizationsSettings,
-        onSelectNotification: notificationSelected);
+    // var androidInitilize = new AndroidInitializationSettings('ic_launcher');
+    // var iOSinitilize = new IOSInitializationSettings();
+    // var initilizationsSettings =
+    //     new InitializationSettings(androidInitilize, iOSinitilize);
+    // fltrNotification = new FlutterLocalNotificationsPlugin();
+    // fltrNotification.initialize(initilizationsSettings,
+    //     onSelectNotification: notificationSelected);
   }
 
-  Future notificationSelected(String payload) async {}
-
-  Future _showNotifications({String sender, String message}) async {
-    var androidDetails = new AndroidNotificationDetails(
-        "Channel ID", "Desi programmer", "This is my channel",
-        importance: Importance.Max);
-    var iOSDetails = new IOSNotificationDetails();
-    var generalNotificationDetails =
-        new NotificationDetails(androidDetails, iOSDetails);
-
-    await fltrNotification.show(
-        0, "$sender", "$message", generalNotificationDetails,
-        payload: "Task");
-  }
+  // Future notificationSelected(String payload) async {}
+  //
+  // Future _showNotifications({String sender, String message}) async {
+  //   var androidDetails = new AndroidNotificationDetails(
+  //       "Channel ID", "Desi programmer", "This is my channel",
+  //       importance: Importance.Max);
+  //   var iOSDetails = new IOSNotificationDetails();
+  //   var generalNotificationDetails =
+  //       new NotificationDetails(androidDetails, iOSDetails);
+  //
+  //   await fltrNotification.show(
+  //       0, "$sender", "$message", generalNotificationDetails,
+  //       payload: "Task");
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +76,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
                   suffix: CupertinoButton(
                     onPressed: () {
                       textEditingController.clear();
-                      print('uploading');
+                      // print('uploading');
                       if (textMessage != null) {
                         uploadDataToCloud(
                             course: widget.course, textMessage: textMessage);
-                        print('uploaded');
+                        // print('uploaded');
                       } else{
-                        print('QWERTY:: null message cant upload');
+                        // print('QWERTY:: null message cant upload');
                       }
                     },
                     child: Text('Send'),
@@ -137,7 +137,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return CupertinoActivityIndicator();
+          return Container(
+              margin: EdgeInsets.only(top: (SizeConfig.one_H*35).roundToDouble()),
+              child: CupertinoActivityIndicator());
         } else {
           final messages = snapshot.data.docs;
           List<MessageCard> messagesWidgets = [];

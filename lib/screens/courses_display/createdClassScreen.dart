@@ -40,7 +40,7 @@ class _CreatedClassScreenState extends State<CreatedClassScreen> {
                       'Create'
                   ),
                   onPressed: () async {
-                    print('+ pressed');
+                    // print('+ pressed');
                     Navigator.push(context, CupertinoPageRoute(
                         builder: (context) =>
                             CreateNewClass(currentUser: widget.user,),

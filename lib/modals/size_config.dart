@@ -36,9 +36,9 @@ class SizeConfig {
     heightMultiplier = _blockSizeVertical;
     widthMultiplier = _blockSizeHorizontal;
 
-    print('heightMultiplier:: $heightMultiplier');
-    print('widthMultiplier:: $widthMultiplier');
-    print('textMultiplier::$textMultiplier');
+    // print('heightMultiplier:: $heightMultiplier');
+    // print('widthMultiplier:: $widthMultiplier');
+    // print('textMultiplier::$textMultiplier');
 
   }
 
@@ -46,6 +46,5 @@ class SizeConfig {
   static double one_W = (0.25*widthMultiplier).roundToDouble();
 
   static double one_H = (0.12*heightMultiplier).roundToDouble();
-
 
 }

@@ -69,7 +69,7 @@ class _AttendanceViewForStudentsState extends State<AttendanceViewForStudents> {
                             ),
                             SizedBox(height: (SizeConfig.one_H*5).roundToDouble()),
                             Text(
-                              "Total Class",
+                              "Total Classes",
                               style: TextStyle(
                                 fontSize: (SizeConfig.one_W*18).roundToDouble(),
                                 // fontWeight: FontWeight.w600,

@@ -53,7 +53,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                   ),
                                   SizedBox(height: (SizeConfig.one_H*5).roundToDouble()),
                                   Text(
-                                    "Total Class",
+                                    "Total Classes",
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*18).roundToDouble(),
                                       fontWeight: FontWeight.w600,
@@ -93,10 +93,9 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(
-                        width: (SizeConfig.one_W*1).roundToDouble(),
-                        color: CupertinoColors.extraLightBackgroundGray),
+                        width: 1, color: CupertinoTheme.of(context).barBackgroundColor.withOpacity(0.7)),
                     borderRadius: BorderRadius.circular((SizeConfig.one_W*6).roundToDouble()),
-                    color: CupertinoColors.white,
+                    color: CupertinoTheme.of(context).barBackgroundColor,
                     boxShadow: [
                       BoxShadow(
                         color: CupertinoColors.systemGrey.withOpacity(0.1),
@@ -140,7 +139,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                   ),
                                   SizedBox(height: (SizeConfig.one_H*5).roundToDouble()),
                                   Text(
-                                    "Total Class",
+                                    "Total Classes",
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*18).roundToDouble(),
                                     ),

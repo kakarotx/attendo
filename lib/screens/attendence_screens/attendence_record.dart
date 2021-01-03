@@ -104,8 +104,8 @@ class _AttendenceRecordPageState extends State<AttendenceRecordPage> {
             final present = snapshot.data["present"];
             final absent = snapshot.data["absent"];
             final totalClasses = snapshot.data["totalClasses"];
-            print("QQQQQQQQQQQQQQQQQQQ::   $present");
-            print('QQQQQQQQQQQQQQQQQQQ::   $absent');
+            // print("QQQQQQQQQQQQQQQQQQQ::   $present");
+            // print('QQQQQQQQQQQQQQQQQQQ::   $absent');
 
             if(totalClasses==0&& present==0) {
               return aPI_widget(1, 1);

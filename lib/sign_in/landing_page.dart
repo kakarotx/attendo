@@ -19,7 +19,7 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
     auth.FirebaseAuth.instance.authStateChanges().listen((user) {
-      print('user :${user?.uid}');
+      // print('user :${user?.uid}');
     });
 
   }
@@ -74,7 +74,7 @@ class _LandingPageBodyState extends State<LandingPageBody> {
     //Return bool
     bool boolValue = sharedPref.getBool('isThemeLight');
     isThemeLight = boolValue;
-    print('getting isThemeLight as $boolValue from local');
+    // print('getting isThemeLight as $boolValue from local');
   }
 
   ///this function saves the bool [isThemeLight] on local storage
@@ -128,17 +128,16 @@ class _LandingPageBodyState extends State<LandingPageBody> {
                         final user = snapshot.data;
 
                         if (user == null) {
-                          print('qwerty ::${user?.uid}');
+                          // print('qwerty ::${user?.uid}');
                           return SignInPage(
                             isThemeLight: isThemeLight,
                           );
                         } else{
-                          print('qwerty ::${user?.uid}');
+                          // print('qwerty ::${user?.uid}');
                           return
                             HomePage(toggleTheme: () {
-                              print('theme changed');
-
-                              print('theme saved to phone locally as ${!isThemeLight}');
+                              // print('theme changed');
+                              // print('theme saved to phone locally as ${!isThemeLight}');
                               setState(() {
                                 isThemeLight = !isThemeLight;
                               });

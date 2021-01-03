@@ -59,17 +59,6 @@ class DevelopersPage extends StatelessWidget {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
   launchFreepikURL(String web_url) async {
       final url = web_url;
       if (await canLaunch(url)) {

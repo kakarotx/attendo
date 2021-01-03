@@ -1,4 +1,3 @@
-
 import 'package:attendo/modals/course_class.dart';
 import 'package:attendo/modals/size_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,6 +28,8 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
   String studentUid;
   String studentName;
 
+  int _totalClassesTillNow = 0;
+
   ///this Uuid package helps us generate new and random user Id
   var uuid = Uuid();
 
@@ -44,16 +45,45 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
     String studentName,
     String emailId,
   }) async {
-    ///this will upload to a Universal Collections of all Courses
-    studentUid = uuid.v1();
-    coursesRef.doc(widget.course.courseCode).collection('studentsEnrolled').doc(studentUid).set({
-      'emailId':emailId,
-      'studentName':studentName,
-      'studentPhotoUrl':studentPhotoUrl,
-      'present':0,
-      'absent':0,
-      'studentId': studentUid,
-    });
+
+    try{
+      final DocumentSnapshot doc = await coursesRef.doc(widget.course.courseCode).get();
+
+      _totalClassesTillNow = doc.data()['totalClasses'];
+
+      ///this will upload to a Universal Collections of all Courses
+      studentUid = uuid.v1();
+      coursesRef.doc(widget.course.courseCode).collection('studentsEnrolled').doc(studentUid).set({
+        'emailId':emailId,
+        'studentName':studentName,
+        'studentPhotoUrl':studentPhotoUrl,
+        'present':0,
+        'absent':0,
+        'studentId': studentUid,
+        'totalClasses': _totalClassesTillNow
+
+      }
+      );
+      Fluttertoast.showToast(
+          msg: "New student added",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: CupertinoTheme.of(context).primaryColor,
+          textColor: CupertinoColors.white,
+          fontSize: 16.0
+      );
+
+    } catch(e){
+      Fluttertoast.showToast(
+          msg: "Unexpected Error, try again",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: CupertinoTheme.of(context).primaryColor,
+          textColor: CupertinoColors.white,
+          fontSize: 16.0
+      );
+
+    }
 
   }
 
@@ -67,8 +97,7 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
               child: Text('Add'),
               onPressed: () {
 
-                print('creating new student...');
-
+                // print('creating new student...');
 
                 if (studentName != null) {
 
@@ -133,14 +162,12 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                 SizedBox(
                   height: (0.61*SizeConfig.heightMultiplier).roundToDouble(),
                 ),
-                Expanded(
-                  child: CupertinoTextField(
-                    placeholder: 'Enter Student Name',
-                    onChanged: (String newValue) {
-                      return studentName = newValue;
-                    },
-                    textAlign: TextAlign.center,
-                  ),
+                CupertinoTextField(
+                  placeholder: 'Enter Student Name',
+                  onChanged: (String newValue) {
+                    return studentName = newValue;
+                  },
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(
                   height: (SizeConfig.one_H*16).roundToDouble()//16
@@ -150,19 +177,14 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'IMPORTANT',
+                        'NOTE',
                         style: TextStyle(color: CupertinoColors.destructiveRed),
                       ),
                       SizedBox(
                         height:(SizeConfig.one_H*4).roundToDouble(),
                       ),
                       Text(
-                          '1. You can also add student manually.'),
-                      SizedBox(
-                        height:(SizeConfig.one_H*10).roundToDouble(),//10
-                      ),
-                      Text(
-                          "2. This helps to have you record of students who don't have phone"),
+                          '1. This way you can add students manually.'),
                     ],
                   ),
                 )
@@ -200,38 +222,3 @@ class _CreateNewStudentPageState extends State<CreateNewStudentPage> {
   }
 }
 
-///DANGER AHEAD-
-///
-//TODO: create a non repeating random number function
-//outside of class
-//failed attempt to create a RandomGenerator
-//TODO: make RANDOM_NUMBER_GENERATOR work
-// int generatedRandomInt() {
-//   int permanentRandomInt;
-//   int tempRandomInt;
-//
-//
-//   //this will run after we create our second card
-//   if (randomIntList.length == 0) {
-//     tempRandomInt = 0 + Random().nextInt(3 - 0);
-//     permanentRandomInt = tempRandomInt;
-//     print('randomInt: $permanentRandomInt');
-//     randomIntList.add(permanentRandomInt);
-//   }
-//   else {
-//     tempRandomInt = 0 + Random().nextInt(3 - 0);
-//     permanentRandomInt = tempRandomInt;
-//     print('randomInt: $permanentRandomInt');
-//     randomIntList.add(permanentRandomInt);
-//     while (randomIntList[randomIntList.last] == randomIntList[randomIntList.length - 2]) {
-//       tempRandomInt = 0 + Random().nextInt(3 - 0);
-//       permanentRandomInt = tempRandomInt;
-//       print('randomInt: $permanentRandomInt');
-//       randomIntList.add(permanentRandomInt);
-//       // print(randomIntList.length);
-//     }
-//
-//   }
-//   return randomIntList.last;
-//
-// }

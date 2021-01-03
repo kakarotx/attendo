@@ -4,7 +4,6 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-
 version: 1.0.0+1
 
 environment:
@@ -35,8 +34,13 @@ dev_dependencies:
   percent_indicator: ^2.1.8
   url_launcher: ^5.7.10
   fluttertoast: ^7.1.6
+  flutter_launcher_icons: "^0.8.0"
 
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/icon/icon.png"
 
 
 flutter:
@@ -49,18 +53,6 @@ flutter:
     - assets/images/artWork/
     - assets/images/others/
 
-  fonts:
-    - family: inter
-      fonts:
-        - asset: fonts/Inter-Black-slnt=0.ttf
-        - asset: fonts/Inter-Bold-slnt=0.ttf
-        - asset: fonts/Inter-ExtraBold-slnt=0.ttf
-        - asset: fonts/Inter-ExtraLight-slnt=0.ttf
-        - asset: fonts/Inter-Light-slnt=0.ttf
-        - asset: fonts/Inter-Medium-slnt=0.ttf
-        - asset: fonts/Inter-Regular-slnt=0.ttf
-        - asset: fonts/Inter-SemiBold-slnt=0.ttf
-        - asset: fonts/Inter-Thin-slnt=0.ttf
-          style: italic
 
+#  keytool -genkey -v -keystore c:\Users\tiklu\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
 

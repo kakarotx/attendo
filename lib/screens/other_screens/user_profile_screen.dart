@@ -68,7 +68,7 @@ class _UserProfileState extends State<UserProfile> {
   ///called at: Show app demo
   ///and will take user to a youtube video
   _launchURL() async {
-    const url = 'https://www.youtube.com/watch?v=s9TQIiq9fF0';
+    const url = 'https://youtu.be/txSncSHJyG4';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

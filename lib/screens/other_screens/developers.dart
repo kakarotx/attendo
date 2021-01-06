@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //media query r2d
-const kEmail = "okaysduo@gmail.com";
+const kEmail = "duoatokays@gmail.com";
 
 class DevelopersPage extends StatelessWidget {
 
@@ -73,7 +73,6 @@ class DevelopersPage extends StatelessWidget {
 
   _launchEmail() async{
     final Uri _emailLaunchUri = Uri(
-
         scheme: 'mailto',
         path: kEmail,
         // queryParameters: {

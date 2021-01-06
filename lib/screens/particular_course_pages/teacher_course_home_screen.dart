@@ -315,14 +315,14 @@ physics: NeverScrollableScrollPhysics(),
   CupertinoButton learnMoreAboutAttendenceBtn(){
     return CupertinoButton(
       child: Text("Learn More about Attendance Mechanism"),
-      onPressed: learnMoreAboutAttendenceDailog,
+      onPressed: learnMoreAboutAttendenceDialog,
     );
   }
 
   ///called at: Show app demo
   ///and will take user to a youtube video
   _launchURL() async {
-    const url = 'https://www.youtube.com/watch?v=s9TQIiq9fF0';
+    const url = 'https://youtu.be/txSncSHJyG4';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -330,7 +330,7 @@ physics: NeverScrollableScrollPhysics(),
     }
   }
 
-  void learnMoreAboutAttendenceDailog(){
+  void learnMoreAboutAttendenceDialog(){
     final attendanceMsg = "Total Classes increase by 1 every-time you take Attendance and update it. Swipe-able cards with student name on it will be displayed after you click TakeAttendance button. For more info watch demo.";
     showCupertinoDialog(
         context: context,
@@ -343,13 +343,15 @@ physics: NeverScrollableScrollPhysics(),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Okays")),
+                  child: Text("Okays"),
+              ),
               CupertinoDialogAction(
                   onPressed: () {
                     Navigator.pop(context);
                     _launchURL();
                   },
-                  child: Text("Watch demo")),
+                  child: Text("Watch demo"),
+              ),
             ],
           );
         });
@@ -363,7 +365,7 @@ physics: NeverScrollableScrollPhysics(),
       child: CupertinoButton.filled(
           child: Text('Take Attendence'),
           onPressed: () async{
-            await fetchdata();
+            await fetchData();
             // print("QQQQQQQQQ::::::   ${studentlist.length}");
             Navigator.push(context, CupertinoPageRoute(builder: (context) {
               return TakeAttendencePage(
@@ -375,14 +377,17 @@ physics: NeverScrollableScrollPhysics(),
             ).then((value) {
               setState(() {
                 dataFetched = false;
-              });
-            });
-          }),
+              },
+              );
+            },
+            );
+          },
+      ),
     );
   }
 
 
-  fetchdata() async {
+  fetchData() async {
       setState(() {
         dataFetched = true;
       });

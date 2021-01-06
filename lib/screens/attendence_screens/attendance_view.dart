@@ -47,7 +47,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                     totalClasses.toString(),
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*26).roundToDouble(),
-                                      fontWeight: FontWeight.w600,
+                                      // fontWeight: FontWeight.w600,
                                       color: CupertinoColors.black,
                                     ),
                                   ),
@@ -56,7 +56,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                     "Total Classes",
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*18).roundToDouble(),
-                                      fontWeight: FontWeight.w600,
+                                      // fontWeight: FontWeight.w600,
                                       color: CupertinoColors.black,
                                     ),
                                   ),
@@ -70,7 +70,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                     totalStudents.toString(),
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*26).roundToDouble(),
-                                      fontWeight: FontWeight.w600,
+                                      // fontWeight: FontWeight.w600,
                                       color: CupertinoColors.black,
                                     ),
                                   ),
@@ -79,7 +79,7 @@ class _AttendanceViewForTeacherState extends State<AttendanceViewForTeacher> {
                                     "Total Students",
                                     style: TextStyle(
                                       fontSize: (SizeConfig.one_W*18).roundToDouble(),
-                                      fontWeight: FontWeight.w600,
+                                      // fontWeight: FontWeight.w600,
                                       color: CupertinoColors.black,
                                     ),
                                   )

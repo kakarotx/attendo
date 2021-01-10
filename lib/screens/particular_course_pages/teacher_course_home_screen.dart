@@ -50,14 +50,13 @@ class _CourseHomePageForTeacherState extends State<CourseHomePageForTeacher> {
   String teacherName;
   List<StudentsForAttendanceCard> studentlist = [];
   bool dataFetched ;
-  String playStoreUrl = "after_app_launch";
+  String playStoreUrl = "https://play.google.com/store/apps/details?id=com.twoSlash.attendo";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     dataFetched = false;
-
   }
 
 
@@ -413,11 +412,6 @@ physics: NeverScrollableScrollPhysics(),
       }
       );
       // print(studentlist);
-
-      //getting AppUrl
-    final appInfoDoc = await appInfoRef.doc("info").get();
-
-    playStoreUrl = appInfoDoc.data()['playStoreUrl'];
 
   }
 
